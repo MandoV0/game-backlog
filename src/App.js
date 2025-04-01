@@ -39,7 +39,7 @@ function App() {
 }
 
 async function getGames(page, pageSize) {
-  const apiKey = `ecf5db96534148848a0a970a030896a7`;
+  const apiKey = process.env.REACT_APP_API_KEY;
   const url = `https://api.rawg.io/api/games?key=${apiKey}&page=${page}&page_size=${pageSize}`;
   console.log("URL: " + url);
   
