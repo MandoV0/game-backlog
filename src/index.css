@@ -143,7 +143,11 @@ code {
 }
 
 .page-button:active {
-  transform: scale(1);
+  transform: scale(1.05);
+}
+
+.page-button.active {
+  background-color: var(--accent-orange);
 }
 
 .genres-container {
