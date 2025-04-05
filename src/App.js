@@ -1,7 +1,7 @@
-import './App.css';
-import GameCard from './GameCard';
-import gamesData from './mockadata.json';
-import { useEffect, useState } from 'react';
+import "./App.css";
+import GameCard from "./GameCard";
+import gamesData from "./mockadata.json";
+import { useEffect, useState } from "react";
 
 function App() {
   const [games, setGames] = useState([]);
@@ -22,10 +22,9 @@ function App() {
         setLoading(false);
       }
     };
-    
+
     fetchData();
   }, [currentPage]); // call when currentPage changes
-
 
   // Reset the page to the top when the page changes
   const handlePageChange = (page) => {
@@ -36,24 +35,31 @@ function App() {
 
   return (
     <div>
-      <div className='searchContainer'>
-        <input type='text' placeholder='Search Games...' className='searchInput'>
-        </input>
+      <div className="searchContainer">
+        <input
+          type="text"
+          placeholder="Search Games..."
+          className="searchInput"
+        ></input>
       </div>
-      <div className='game-grid'>
+      <div className="game-grid">
         {loading ? (
           <p>Loading games...</p>
-        ) : games.length > 0 ? games.map((game) =>
-          <GameCard
-            key={game.id} // Add a key prop for performance
-            image={game.background_image}
-            name={(game.name)}
-            description={"Placeholder"}
-            genres={game.genres.map(genre => genre.name)}
-          />
-        ) : <p>No games found</p>}
+        ) : games.length > 0 ? (
+          games.map((game) => (
+            <GameCard
+              key={game.id} // Add a key prop for performance
+              image={game.background_image}
+              name={game.name}
+              description={"Placeholder"}
+              genres={game.genres.map((genre) => genre.name)}
+            />
+          ))
+        ) : (
+          <p>No games found</p>
+        )}
       </div>
-      <div className='pagination-container'>
+      <div className="pagination-container">
         {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
           // Calculate which page numbers to show
           let pageNum;
@@ -66,17 +72,25 @@ function App() {
             start = Math.max(1, end - 4);
             pageNum = start + i;
           }
-          
+
           return (
-            <button 
+            <button
               key={pageNum}
-              className={`page-button ${currentPage === pageNum ? 'active' : ''}`}
+              className={`page-button ${
+                currentPage === pageNum ? "active" : ""
+              }`}
               onClick={() => handlePageChange(pageNum)}
             >
               {pageNum}
             </button>
           );
         })}
+
+        <select className="page-select" value={currentPage} onChange={ (e) => handlePageChange(Number(e.target.value)) }>
+          {Array.from( {length: Math.min(100, totalPages - currentPage + 1) }, (_, i) => currentPage + i)
+          .map((pageNum) => (<option key={pageNum} value={pageNum}>{pageNum}</option>))}
+        </select>
+
       </div>
     </div>
   );
@@ -86,12 +100,12 @@ async function getGames(page, pageSize) {
   const apiKey = process.env.REACT_APP_API_KEY;
   const url = `https://api.rawg.io/api/games?key=${apiKey}&page=${page}&page_size=${pageSize}`;
   console.log("URL: " + url);
-  
+
   try {
     const response = await fetch(url);
     const data = await response.json();
     console.log(data);
-    
+
     return data;
   } catch (error) {
     console.error(error.message);
