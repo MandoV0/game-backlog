@@ -1,9 +1,10 @@
-import "./App.css";
-import GameCard from "./GameCard";
-import Pagination from "./Pagination";
-import gamesData from "./mockadata.json";
+import "./Styles/App.css";
+import Pagination from "./Components/Pagination";
 import { useEffect, useState } from "react";
-import { getGames } from "./API";
+import { getGames } from "./Services/API";
+import { Header } from "./Components/Header";
+import { Search } from "./Components/Search";
+import { GameGrid } from "./Components/GameGrid";
 
 function App() {
   const [games, setGames] = useState([]);
@@ -14,14 +15,15 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true); // Set loading to true before fetching data
         const data = await getGames(currentPage, 20);
         setGames(data.results);
         const totalPages = Math.ceil(data.count / 20);
         setTotalPages(totalPages);
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching data: ", error.message);
-        setLoading(false);
+      } finally {
+        setLoading(false); // Ensure loading is set to false after fetching
       }
     };
 
@@ -37,30 +39,10 @@ function App() {
 
   return (
     <div>
-      <div className="searchContainer">
-        <input
-          type="text"
-          placeholder="Search Games..."
-          className="searchInput"
-        ></input>
-      </div>
-      <div className="game-grid">
-        {loading ? (
-          <p>Loading games...</p>
-        ) : games.length > 0 ? (
-          games.map((game) => (
-            <GameCard
-              id={game.id}
-              image={game.background_image}
-              name={game.name}
-              description={"Placeholder"}
-              genres={game.genres.map((genre) => genre.name)}
-            />
-          ))
-        ) : (
-          <p>No games found</p>
-        )}
-      </div>
+      <Header></Header>
+      <Search></Search>
+
+      {loading ? ( <p>Loading Games...</p>) : (<GameGrid games={games} />)}
       
       <Pagination
         currentPage={currentPage}

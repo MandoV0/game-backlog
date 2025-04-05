@@ -205,3 +205,60 @@ code {
   transform: scale(1.05);
   background-color: var(--bg-primary);
 }
+
+.app-container {
+  display: flex;
+}
+
+.ref-list {
+  display: flex;
+  flex-direction: row;
+  list-style: none;
+  gap: 10px;
+}
+
+.header-button {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.header-button:hover {
+  background-color: var(--bg-tertiary);
+  transform: scale(1.05);
+}
+
+.left-panel {
+  width: 200px;
+  background-color: var(--bg-secondary);
+  padding: 20px;
+  box-shadow: 2px 0 5px var(--shadow);
+}
+
+.favorites-button {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.favorites-button:hover {
+  background-color: var(--bg-primary);
+}
+
+.favorites-button.active {
+  background-color: var(--accent-orange);
+  color: var(--text-primary);
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+}
