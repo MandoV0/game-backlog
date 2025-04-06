@@ -42,9 +42,9 @@ const GameCard = ({ id, image, name, description, genres }) => {
       <img src={image} alt={name} />
       <h2>{name}</h2>
       <div className="genres-container">
-        {genres.map((genre, index) => (
+        {genres.length > 0 ? genres.map((genre, index) => (
           <span key={index} className="genrecard">{genre}</span>
-        ))}
+        )) : <span className="genrecard">No genres available</span>}
       </div>
     </div>
   );
