@@ -4,10 +4,10 @@ import "../Styles/Favorites.css";
 import { Header } from "../Components/Header";
 import { GameCard } from "../Components/GameCard";
 import { GameGrid } from "../Components/GameGrid";
-import { getGames } from "../Services/API";
+import { bulkFetchGames, getGames } from "../Services/API";
+import { getFavorites } from "../Utils/Cookies";
 
 const Favorites = () => {
-
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -15,7 +15,7 @@ const Favorites = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const data = await getGames(1, 20);
+        const data = await bulkFetchGames(getFavorites());
         if (data && data.results) {
           console.log("Game Data: ", data.results);
           setGames(data.results);
@@ -32,6 +32,8 @@ const Favorites = () => {
     fetchData();
   }
   , []);
+
+  console.log(getFavorites());
 
   return (
     <div>

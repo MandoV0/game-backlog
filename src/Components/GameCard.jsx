@@ -1,39 +1,29 @@
 import React, { useState, useEffect } from 'react';
+import { deleteFavorite, saveFavorite, isFavorite } from '../Utils/Cookies'; // Import your CSS file for styling
 
 const GameCard = ({ id, image, name, description, genres }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
-
-  // Helper function to get a cookie value by name
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-    return null;
-  };
-
+  const [isFav, setIsFavorite] = useState(false);
+  console.log(document.cookie);
   // Toggle favorite status and update the cookie
   const toggleFavorite = () => {
-    const newFavoriteStatus = !isFavorite;
-    setIsFavorite(newFavoriteStatus);
-
-    // Update the cookie
-    const favorites = JSON.parse(getCookie('favorites') || '{}');
-    favorites[id] = newFavoriteStatus;
-    document.cookie = `favorites=${JSON.stringify(favorites)}; path=/; max-age=31536000`; // 1 year
+    setIsFavorite(!isFav); // Toggle the state
+    if (isFav) {
+      deleteFavorite(id); // Remove from favorites
+    }
+    else {
+      saveFavorite(id); // Add to favorites
+    }
   };
 
   // Load favorite status from the cookie on component mount
   useEffect(() => {
-    const favorites = JSON.parse(getCookie('favorites') || '{}');
-    if (favorites[id]) {
-      setIsFavorite(true);
-    }
+    setIsFavorite(isFavorite(id)); // Check if the current ID is in the favorites
   }, [id]);
 
   return (
     <div className="gamecard">
       <button
-        className={`favorite-button ${isFavorite ? 'favorite' : ''}`}
+        className={`favorite-button ${isFav ? 'favorite' : ''}`}
         onClick={toggleFavorite}
         aria-label="Favorite"
       >
