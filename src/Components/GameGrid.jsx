@@ -6,6 +6,7 @@ export const GameGrid = ({ games }) => {
     {
       games.map((game) => (
         <GameCard
+          key={game.id}
           id={game.id}
           image={game.background_image}
           name={game.name}

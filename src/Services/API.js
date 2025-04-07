@@ -46,6 +46,8 @@ export const getGameDetails = async (id) => {
 Fetches multiple games at once. Used for the Favorites page.
 Much more efficient than fetching each game one by one.
 And it also spares the API limit.
+
+NOTE!!!: Only fetches 20 games at once. So do a new request for every 20 games.
 */
 export const bulkFetchGames = async (ids) => {
   const apiKey = process.env.REACT_APP_API_KEY;

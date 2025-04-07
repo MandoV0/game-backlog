@@ -21,7 +21,8 @@ const GameCard = ({ id, image, name, description, genres }) => {
   }, [id]);
 
   return (
-    <div className="gamecard">
+     // Double click to favorite
+    <div className="gamecard" onClick={e => { if (e.detail === 2) { toggleFavorite(); } }}>
       <button
         className={`favorite-button ${isFav ? 'favorite' : ''}`}
         onClick={toggleFavorite}
