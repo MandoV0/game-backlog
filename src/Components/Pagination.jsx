@@ -27,7 +27,10 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
             {/* Shows the next 100 pages for a easier navigation. */}
             <select className="page-select" value={currentPage} onChange={(e) => onPageChange(Number(e.target.value))}>
-                {Array.from({ length: Math.min(100, totalPages - currentPage + 1) }, (_, i) => currentPage + i)
+                {Array.from({ length: 
+                  Math.min(101, totalPages) }, // 50 pages left, current center, 50 pages right.
+                  (_, i) => Math.max(1, currentPage - 50) + i // Ensures starting page is is 1.
+                ).filter((pageNum) => pageNum <= totalPages)  // Max totalPages
                     .map((pageNum) => (<option key={pageNum} value={pageNum}>{pageNum}</option>))}
             </select>
         </div>
