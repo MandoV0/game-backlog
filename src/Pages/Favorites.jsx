@@ -7,6 +7,7 @@ import { GameGrid } from "../Components/GameGrid";
 import { bulkFetchGames, getGames } from "../Services/API";
 import { getFavorites } from "../Utils/Cookies";
 import Pagination from "../Components/Pagination";
+import { Navbar } from "../Components/Navbar";
 
 const Favorites = () => {
   const [games, setGames] = useState([]);
@@ -49,7 +50,7 @@ const Favorites = () => {
 
   return (
     <div>
-      <Header></Header>
+      <Navbar/>
       <h1 className="h1">Your Favorite Games</h1>
       {loading ? (<p>Loading games...</p>) : <GameGrid games={games} />}
       { getFavorites().length > 20 ?

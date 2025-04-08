@@ -4,6 +4,7 @@ import { Search } from "../Components/Search";
 import { GameGrid } from "../Components/GameGrid";
 import React, {useState, useEffect} from "react";
 import { getGames } from "../Services/API";
+import { Navbar } from "../Components/Navbar";
 
 const Games = () => {
   const [games, setGames] = useState([]);
@@ -38,7 +39,7 @@ const Games = () => {
 
   return (
     <div>
-      <Header></Header>
+      <Navbar/>
       <Search></Search>
 
       {loading ? ( <p>Loading Games...</p>) : (<GameGrid games={games} />)}

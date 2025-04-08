@@ -5,9 +5,8 @@ export const Header = () => {
     <header>
       <nav>
         <ul className="ref-list">
-          <li className="header-button"><Link to="/">Home</Link></li>
-          <li className="header-button"><Link to="/favorites">Favorites</Link></li>
-          <li className="header-button">About</li>
+          <Link to="/"><li className="header-button">Home</li></Link>
+          <Link to="/favorites"><li className="header-button">Favorites</li></Link>
         </ul>
       </nav>
     </header>
