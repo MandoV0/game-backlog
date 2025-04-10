@@ -81,14 +81,20 @@ code {
   transform: scale(1);
 }
 
+/* Search Styles */
 .searchContainer {
+  display: flex;
   justify-content: center;
-  margin: 20px;
+  width: 100%;
+  margin: 20px 0;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .searchInput {
   padding: 10px;
   width: 50%;
+  max-width: 600px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background-color: var(--bg-secondary);
@@ -232,8 +238,10 @@ code {
   background-color: var(--bg-primary);
 }
 
+/* App Layout */
 .app-container {
   display: flex;
+  width: 100%;
 }
 
 .ref-list {
@@ -241,6 +249,8 @@ code {
   flex-direction: row;
   list-style: none;
   gap: 10px;
+  width: 100%;
+  justify-content: center;
 }
 
 .header-button {
@@ -287,4 +297,16 @@ code {
 .main-content {
   flex: 1;
   padding: 20px;
+  width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .searchInput {
+    width: 80%;
+  }
+  
+  .searchContainer {
+    padding: 0 10px;
+  }
 }

@@ -28,19 +28,24 @@
 .responsive-navbar {
   background-color: var(--bg-secondary);
   color: var(--text-primary);
-  padding: 10px 20px;
+  padding: 10px 0;
   box-shadow: 0 2px 5px var(--shadow);
   position: sticky;
   top: 0;         /* Combined with sticky to always stick on the top */
   z-index: 1000;  /* Guarantees the navbar always renders on top of other elements */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .navbar-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1600px;
   margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .navbar-logo {
@@ -107,29 +112,37 @@
   }
 
   .navbar-links {
-    display: none;
-    flex-direction: column;
     position: absolute;
     top: 100%;
     left: 0;
     width: 100%;
     background-color: var(--bg-secondary);
+    flex-direction: column;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
     box-shadow: 0 2px 5px var(--shadow);
-    padding: 10px 0;
   }
 
   .navbar-links.open {
-    display: flex;
+    max-height: 300px;
   }
 
   .navbar-links ul {
     flex-direction: column;
+    width: 100%;
     align-items: center;
   }
 
-  .navbar-links a {
-    width: 100%;
+  .navbar-links li {
+    width: 90%;
     text-align: center;
-    padding: 15px 0;
+  }
+
+  .navbar-links a {
+    padding: 15px 20px;
+    width: 90%;
+    text-align: center;
   }
 }

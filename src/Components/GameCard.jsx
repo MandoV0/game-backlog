@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { deleteFavorite, saveFavorite, isFavorite } from '../Utils/Cookies'; // Import your CSS file for styling
+import '../Styles/Game.css';
 
 const GameCard = ({ id, image, name, description, genres }) => {
   const [isFav, setIsFavorite] = useState(false);

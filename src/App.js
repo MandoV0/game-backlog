@@ -16,8 +16,6 @@ function App() {
       <Route path="/favorites" element={<Favorites/>} />
     </Routes>
   );
-
-
 }
 
 export default App;
