@@ -34,3 +34,19 @@ export const isFavorite = (id) => {
 export const getFavorites = () => {
   return JSON.parse(getCookie('favorites') || '[]');
 };
+
+// Sets the progress of a game ID ("Not Started", "Playing", "Completed", "On Hold",  "Dropped")
+export const setProgress = (id, progress) => {
+}
+
+// Sets the progress of a game ID ("Not Started", "Playing", "Completed", "On Hold",  "Dropped")
+export const getProgress = (id) => {
+  return "Not Started";
+}
+
+export const setReview = (id, review) => {
+}
+
+export const getReview = (id) => {
+  return 0;
+}

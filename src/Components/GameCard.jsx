@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { deleteFavorite, saveFavorite, isFavorite } from '../Utils/Cookies'; // Import your CSS file for styling
+import { deleteFavorite, saveFavorite, isFavorite } from '../Utils/Cookies';
 import '../Styles/Game.css';
+import ProgressDropdown from '../Components/ProgressDropdown'; 
+import RatingBar from '../Components/RatingBar'; // Import the RatingBar component
 
-const GameCard = ({ id, image, name, description, genres }) => {
+const GameCard = ({ id, image, name, description, genres, isReviewCard }) => {
   const [isFav, setIsFavorite] = useState(false);
   console.log(document.cookie);
   // Toggle favorite status and update the cookie
@@ -33,6 +35,16 @@ const GameCard = ({ id, image, name, description, genres }) => {
       </button>
       <img src={image} alt={name} />
       <h2>{name}</h2>
+
+      {isReviewCard // Only show the ratings and progress dropdown if this is in the backlog panel
+        ?
+        <>
+          <ProgressDropdown progress={0} onChange={() => {}} />
+          <RatingBar/> 
+        </>
+        : null
+      }
+      
       <div className="genres-container">
         {genres.length > 0 ? genres.map((genre, index) => (
           <span key={index} className="genrecard">{genre}</span>

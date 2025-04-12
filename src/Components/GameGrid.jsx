@@ -1,6 +1,6 @@
 import GameCard from "./GameCard";
 
-export const GameGrid = ({ games }) => {
+export const GameGrid = ({ games, isReviewCard }) => {
   
   return(
     <div  className="game-grid-container">
@@ -14,6 +14,7 @@ export const GameGrid = ({ games }) => {
               name={game.name}
               description={"Placeholder"}
               genres={game.genres.map((genre) => genre.name)}
+              isReviewCard={isReviewCard}
             />
           ))
         }

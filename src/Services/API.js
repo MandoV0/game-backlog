@@ -1,4 +1,4 @@
-import mockGames from "../Assets/mockadata.json";
+//import mockGames from "../Assets/mockadata.json";
 
 /*
 Simply returns the games from the API as a Json object.
@@ -13,7 +13,7 @@ export const getGames = async (page, pageSize) => {
     // Mock data for testing, to not use the API limit.
     if (useMockData) {
       console.log("Using mock data");
-      return mockGames;
+      //return mockGames;
     }
 
     try {

@@ -52,7 +52,7 @@ const Favorites = () => {
     <div>
       <Navbar/>
       <h1 className="h1">Your Favorite Games</h1>
-      {loading ? (<p>Loading games...</p>) : <GameGrid games={games} />}
+      {loading ? (<p>Loading games...</p>) : <GameGrid games={games} isReviewCard={true} />}
       { getFavorites().length > 20 ?
       (<Pagination
         currentPage={currentPage}
