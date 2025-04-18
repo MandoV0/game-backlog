@@ -1,5 +1,4 @@
 import Pagination from "../Components/Pagination";
-import { Header } from "../Components/Header";
 import { Search } from "../Components/Search";
 import { GameGrid } from "../Components/GameGrid";
 import React, {useState, useEffect} from "react";
@@ -39,20 +38,23 @@ const Games = () => {
   };
 
   return (
-    <div className="games-container">
-      <Navbar/>
-      <Search></Search>
+    <>
+    <Navbar/>
+      <div className="games-container">
+        <Search></Search>
 
-      {loading ? ( <p>Loading Games...</p>) : (<GameGrid games={games} />)}
-      
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+        {loading ? ( <p>Loading Games...</p>) : (<GameGrid games={games} />)}
+        
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
 
       </div>
+    </>
   );
+  
 }
 
 export default Games;

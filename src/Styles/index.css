@@ -40,6 +40,10 @@ code {
     monospace;
 }
 
+#header {
+  position: fixed;
+}
+
 .gamecard {
   border-radius: 8px;
   background-color: var(--bg-tertiary);
@@ -242,6 +246,10 @@ code {
 .app-container {
   display: flex;
   width: 100%;
+}
+
+.fixed-header {
+  position: fixed;
 }
 
 .ref-list {

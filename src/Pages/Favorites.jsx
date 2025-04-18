@@ -1,10 +1,8 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import "../Styles/Favorites.css";
-import { Header } from "../Components/Header";
-import { GameCard } from "../Components/GameCard";
 import { GameGrid } from "../Components/GameGrid";
-import { bulkFetchGames, getGames } from "../Services/API";
+import { bulkFetchGames } from "../Services/API";
 import { getFavorites } from "../Utils/Cookies";
 import Pagination from "../Components/Pagination";
 import { Navbar } from "../Components/Navbar";
