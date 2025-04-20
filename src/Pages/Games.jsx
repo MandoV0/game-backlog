@@ -2,7 +2,7 @@ import Pagination from "../Components/Pagination";
 import { Search } from "../Components/Search";
 import { GameGrid } from "../Components/GameGrid";
 import React, {useState, useEffect} from "react";
-import { getGames } from "../Services/API";
+import { getGames, getGamesWithQuery } from "../Services/API";
 import { Navbar } from "../Components/Navbar";
 import "../Styles/Game.css";
 
@@ -11,12 +11,13 @@ const Games = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true); // Set loading to true before fetching data
-        const data = await getGames(currentPage, 20);
+        const data = await getGamesWithQuery(query, 20, currentPage);
         setGames(data.results);
         const totalPages = Math.ceil(data.count / 20);
         setTotalPages(totalPages);
@@ -28,7 +29,7 @@ const Games = () => {
     };
 
     fetchData();
-  }, [currentPage]); // call when currentPage changes
+  }, [currentPage, query]); // call when currentPage or query changes
 
   // Reset the page to the top when the page changes
   const handlePageChange = (page) => {
@@ -37,11 +38,16 @@ const Games = () => {
     window.scrollTo(0, 0);
   };
 
+  const handleSearch = async (newQuery) => {
+    setCurrentPage(1); // Reset to page 1 when searching
+    setQuery(newQuery); // Set the search query
+  }
+
   return (
     <>
     <Navbar/>
       <div className="games-container">
-        <Search></Search>
+        <Search onSearch={handleSearch}/>
 
         {loading ? ( <p>Loading Games...</p>) : (<GameGrid games={games} />)}
         
