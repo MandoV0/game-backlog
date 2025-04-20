@@ -73,8 +73,13 @@
   z-index: 1;
 }
 
-.favorite-button.favorite {
+.favorite-icon {
+  fill: var(--text-secondary);
+}
+
+.favorite-button.favorite .favorite-icon {
   color: var(--accent-orange);
+  fill: var(--accent-orange);
 }
 
 .gamecard:hover .favorite-button {
@@ -99,6 +104,7 @@
   text-align: center;
   white-space: nowrap;
   box-shadow: 0 0 5px var(--shadow);
+  outline: 2px solid var(--border);
 }
 
 .genrecard:hover {
@@ -125,6 +131,10 @@
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
+}
+
+.star-text {
+  outline: 2px solid var(--border);
 }
 
 /* Responsive Grid */

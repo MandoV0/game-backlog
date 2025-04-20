@@ -3,6 +3,8 @@ import { deleteFavorite, saveFavorite, isFavorite } from '../Utils/Cookies';
 import '../Styles/Game.css';
 import ProgressDropdown from '../Components/ProgressDropdown'; 
 import RatingBar from '../Components/RatingBar'; // Import the RatingBar component
+import { ReactComponent as FavoriteIcon } from '../Assets/bookmark.svg';
+
 
 const GameCard = ({ id, image, name, description, genres, isReviewCard }) => {
   const [isFav, setIsFavorite] = useState(false);
@@ -31,7 +33,7 @@ const GameCard = ({ id, image, name, description, genres, isReviewCard }) => {
         onClick={toggleFavorite}
         aria-label="Favorite"
       >
-        ★
+        <FavoriteIcon className="favorite-icon"/>
       </button>
       <img src={image} alt={name} />
       <h2>{name}</h2>
