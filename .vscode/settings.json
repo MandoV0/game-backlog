@@ -1,5 +1,6 @@
 {
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
-  "git.ignoreLimitWarning": true
+  "git.ignoreLimitWarning": true,
+  "java.compile.nullAnalysis.mode": "automatic"
 }
