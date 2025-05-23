@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("api/users")
 public class UserController {
@@ -33,11 +34,16 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestParam String username, @RequestParam String password) {
+        System.out.println("Login attempt with:");
+        System.out.println("  Username: " + username);
+        System.out.println("  Password: " + password);
         try {
             boolean isValid = userService.validateUserLogin(username, password);
             if (isValid) {
+                System.out.println("Login successful");
                 return ResponseEntity.ok("Login successful");
             } else {
+                System.out.println("Login failed");
                 return ResponseEntity.status(401).body("Invalid username or password");
             }
         } catch (RuntimeException e) {
