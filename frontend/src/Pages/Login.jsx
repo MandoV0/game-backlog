@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import APIService from '../Services/APIService';
+import '../Styles/Login.css';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -23,24 +24,26 @@ const Login = () => {
   };
 
   return (
-    <div className="login">
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <input 
-          type="text" 
-          placeholder="Username"
-          value={username}
-          onChange={e => setUsername(e.target.value)} 
-        />
-        <input 
-          type="password" 
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)} 
-        />
-        <button type="submit">Login</button>
-      </form>
-      {status && <p>{status}</p>}
+    <div className="login-page">
+      <div className='login-container'>
+        <h1>Sign In</h1>
+        <form onSubmit={handleSubmit} className='login-form'>
+          <input 
+            type="text" 
+            placeholder="Username"
+            value={username}
+            onChange={e => setUsername(e.target.value)} 
+          />
+          <input 
+            type="password" 
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)} 
+          />
+          <button className='login-button' type="submit">Login</button>
+        </form>
+        {status && <p>{status}</p>}
+      </div>
     </div>
   );
 };

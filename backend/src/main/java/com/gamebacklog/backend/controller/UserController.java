@@ -37,6 +37,7 @@ public class UserController {
         System.out.println("Login attempt with:");
         System.out.println("  Username: " + username);
         System.out.println("  Password: " + password);
+        
         try {
             boolean isValid = userService.validateUserLogin(username, password);
             if (isValid) {
