@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using GameBacklogAPI.Model;
 using GameBacklogAPI;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 public class AppDbContext : DbContext
 {
