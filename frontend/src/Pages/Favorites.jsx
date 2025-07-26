@@ -17,11 +17,14 @@ const Favorites = () => {
       
       try {
         setLoading(true);
+
+        const allFavorites = getFavorites().filter(id => typeof id === 'number' && !isNaN(id));
+        const data = await bulkFetchGames(allFavorites);
+        const games = data.results || [];
         const startIndex = (currentPage - 1) * 20;
         const endIndex = startIndex + 20;
-        const newIndexes = getFavorites().slice(startIndex, endIndex);
         
-        const data = await bulkFetchGames(newIndexes);
+        setGames(games.slice(startIndex, endIndex));
 
         if (data && data.results) {
           console.log("Game Data: ", data.results);
@@ -46,6 +49,8 @@ const Favorites = () => {
     window.scrollTo(0, 0);
   }
 
+  const validGames = games.filter(game => game !== null && game !== undefined);
+
   return (
     <div>
       <Navbar/>
@@ -54,7 +59,7 @@ const Favorites = () => {
       { getFavorites().length > 20 ?
       (<Pagination
         currentPage={currentPage}
-        totalPages={Math.ceil(getFavorites().length / 20)}
+        totalPages={Math.ceil(validGames.length / 20)}
         onPageChange={handlePageChange}
       />) : null}
     </div>

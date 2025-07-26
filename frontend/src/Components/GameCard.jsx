@@ -7,6 +7,10 @@ import { ReactComponent as FavoriteIcon } from '../Assets/bookmark.svg';
 
 
 const GameCard = ({ id, image, name, description, genres, isReviewCard }) => {
+  // Limit description to 128 characters
+  const shortDescription = description && description.length > 128
+    ? description.slice(0, 128) + '...'
+    : description;
   const [isFav, setIsFavorite] = useState(false);
   console.log(document.cookie);
   // Toggle favorite status and update the cookie
@@ -46,6 +50,7 @@ const GameCard = ({ id, image, name, description, genres, isReviewCard }) => {
         </>
         : null
       }
+      <h5>{shortDescription}</h5>
       
       <div className="genres-container">
         {genres.length > 0 ? genres.map((genre, index) => (
