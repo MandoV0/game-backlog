@@ -1,62 +1,6 @@
 const pool = require('./db');
 
-const games = [
-  {
-    title: 'The Witcher 3: Wild Hunt',
-    description:
-      'The Witcher 3: Wild Hunt is an action role-playing game with a third-person perspective. Players control Geralt of Rivia, a monster slayer known as a Witcher.',
-    releasedate: '2015-05-19',
-    genres: ['Adventure', 'Action', 'RPG'],
-    images: [
-      'https://example.com/witcher3-1.jpg',
-      'https://example.com/witcher3-2.jpg',
-    ]
-  },
-  {
-    title: 'God of War',
-    description:
-      'God of War is an action-adventure game where Kratos battles gods and monsters in Norse mythology while bonding with his son.',
-    releasedate: '2018-04-20',
-    genres: ['Action', 'Adventure'],
-    images: [
-      'https://example.com/gow1.jpg',
-      'https://example.com/gow2.jpg',
-    ]
-  },
-  {
-    title: 'Hades',
-    description:
-      'Hades is a rogue-like dungeon crawler where you defy the god of the dead as you hack and slash your way out of the Underworld.',
-    releasedate: '2020-09-17',
-    genres: ['Action', 'Rogue-like'],
-    images: [
-      'https://example.com/hades1.jpg',
-      'https://example.com/hades2.jpg',
-    ]
-  },
-  {
-    title: 'The Legend of Zelda: Breath of the Wild',
-    description:
-      'An open-world adventure game where you explore the vast kingdom of Hyrule and uncover its secrets.',
-    releasedate: '2017-03-03',
-    genres: ['Adventure', 'Action'],
-    images: [
-      'https://example.com/zelda1.jpg',
-      'https://example.com/zelda2.jpg',
-    ]
-  },
-  {
-    title: 'Elden Ring',
-    description:
-      'Elden Ring is an open-world action RPG created by FromSoftware and George R.R. Martin, known for its punishing combat and deep lore.',
-    releasedate: '2022-02-25',
-    genres: ['RPG', 'Action', 'Fantasy'],
-    images: [
-      'https://example.com/eldenring1.jpg',
-      'https://example.com/eldenring2.jpg',
-    ]
-  }
-];
+let games = require('./games.json')
 
 async function seed() {
     try {
