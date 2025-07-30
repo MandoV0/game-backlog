@@ -3,8 +3,9 @@ import '../styles/Home.css'
 import { GameCard } from './GameCard'
 import { getGames } from '../services/API';
 import Pagination from '../components/Pagination';
+import { fetchData } from '../helpers/fetchGame';
 
-type Game = {
+export type Game = {
   id: number;
   title: string;
   description: string;
@@ -23,27 +24,8 @@ export const Home: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getGames();
-        const mappedGames = data.results.map((game: any) => ({
-          id: game.gameid,
-          title: game.title,
-          description: game.description,
-          genres: game.genres,
-          images: game.images,
-        }));
-        setTotalpages(Number(Math.ceil(parseInt(data.count) / pageSize)))
-        setGames(mappedGames);
-      } catch (err: any) {
-        setError(err.message || 'Failed to load games');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+    fetchData(currentPage, pageSize, setGames, setTotalpages, setError, setLoading);
+  }, [currentPage]);
 
   return(
   <div>
