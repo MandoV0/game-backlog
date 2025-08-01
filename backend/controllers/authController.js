@@ -1,7 +1,8 @@
 const pool = require("../db");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
-const { isMissing } = require('../helpers/isMissing');
+const { isMissing } = require("../helpers/isMissing");
+const { generateToken } = require("../middleware/jwtHelper");
 
 exports.login = async (req, res) => {
   try {
@@ -13,9 +14,7 @@ exports.login = async (req, res) => {
         .json({ message: "Email and password are required." });
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    const query = `SELECT password_hash FROM users WHERE email = $1`;
+    const query = `SELECT * FROM users WHERE email = $1`;
     const result = await pool.query(query, [email]);
 
     if (result.rows.length == 0) {
@@ -23,15 +22,26 @@ exports.login = async (req, res) => {
     }
     const user = result.rows[0];
     const storedpasswordHash = user.password_hash;
-    const isMatch = bcrypt.compare(storedpasswordHash, passwordHash);
+    const isMatch = bcrypt.compare(password, storedpasswordHash);
 
-    if (!isMatch) {
+    if (!isMatch) { 
       return res.status(401).send("The Username or Password is wrong.");
     }
 
-    res.send("Logged in successfully.");
+    const jwtToken = generateToken(user.userid, user.username, user.email);
+
+    res.status(200).json({
+      message: "Logged in successfully.",
+      jwtToken,
+      user: {
+        id: user.userid,
+        username: user.username,
+        email: user.email,
+      },
+    });
   } catch (err) {
     console.log(err);
+    res.status(500).json({ message: "Server error during login" });
   }
 };
 

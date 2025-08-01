@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const { getGames, getGameWithId, bulkGetGamesWithId } = require('./controllers/gameController');
 const { login, register } = require('./controllers/authController')
+const { isTokenValid } = require('./middleware/jwtHelper');
 
 const app = express()
 app.use(express.json())
@@ -13,9 +14,9 @@ app.get('/', async(req, res) => {
     res.send("API is running.");
 });
 
-app.get('/games', getGames);
-app.get('/games/:id', getGameWithId);
-app.get('/games/bulk/:ids', bulkGetGamesWithId);
+app.get('/games', isTokenValid, getGames);
+app.get('/games/:id', isTokenValid, getGameWithId);
+app.get('/games/bulk/:ids', isTokenValid, bulkGetGamesWithId);
 
 app.post('/auth/login', login);
 app.post('/auth/register', register);

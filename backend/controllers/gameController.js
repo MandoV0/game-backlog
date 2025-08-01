@@ -1,4 +1,5 @@
 const pool = require("../db");
+const { isTokenValid } = require("../middleware/jwtHelper");
 
 exports.getGames = async (req, res) => {
   try {
