@@ -6,12 +6,12 @@ export const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage('');
 
     try {
-      const data = login(email, password);
+      const data = await login(email, password);
       console.log(data);
 
       setMessage('Login Complete!');
@@ -28,6 +28,9 @@ export const Login: React.FC = () => {
   return (
     <div>
       <h2>Login</h2>
+      {
+        <p>{message}</p>
+      }
       <form onSubmit={handleSubmit}>
         <div>
           <label>Email:</label>

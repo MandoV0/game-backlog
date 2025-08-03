@@ -1,6 +1,14 @@
 export async function getGames(offset: number = 0, limit: number = 20) {
+  const token = localStorage.getItem('token');
+
   return await fetchJson(
-    `http://localhost:3000/games?offset=${offset}&limit=${limit}`
+    `http://localhost:3000/games?offset=${offset}&limit=${limit}`,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    }
   );
 }
 
@@ -29,7 +37,7 @@ export async function login(email: string = "", password: string = "") {
       throw new Error('Invalid response from server');
     }
     
-    console.log('Response data:', data);
+    console.log('Response data:', data);  
     
     if (!response.ok) {
       throw new Error(data.message || data.error || 'Login Failed');
@@ -43,8 +51,8 @@ export async function login(email: string = "", password: string = "") {
   }
 }
 
-export async function fetchJson(url: string): Promise<any> {
-  const response = await fetch(url);
+export async function fetchJson(url: string, options: RequestInit = {}): Promise<any> {
+  const response = await fetch(url, options);
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
