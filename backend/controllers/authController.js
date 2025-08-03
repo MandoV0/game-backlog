@@ -18,14 +18,19 @@ exports.login = async (req, res) => {
     const result = await pool.query(query, [email]);
 
     if (result.rows.length == 0) {
-      return res.status(401).send("The Username or Password is wrong.");
+      return res.status(401).json({message: "The Username or Password is wrong."});
     }
+
     const user = result.rows[0];
     const storedpasswordHash = user.password_hash;
-    const isMatch = bcrypt.compare(password, storedpasswordHash);
+    const isMatch = await bcrypt.compare(password, storedpasswordHash);
+
+    console.log(storedpasswordHash);
+    console.log(password);
+    console.log(isMatch);
 
     if (!isMatch) { 
-      return res.status(401).send("The Username or Password is wrong.");
+      return res.status(401).json({message: "The Username or Password is wrong."});
     }
 
     const jwtToken = generateToken(user.userid, user.username, user.email);
