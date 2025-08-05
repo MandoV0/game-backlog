@@ -60,5 +60,16 @@ export async function fetchJson(url: string, options: RequestInit = {}): Promise
 }
 
 export async function toggleFavorite(gameid: number) {
-  
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`http://localhost:3000/favorite/${gameid}`, {
+      method: "POST",
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  } catch (err) {
+    console.log('Error while toggling Favorite:', err);
+  }
 }

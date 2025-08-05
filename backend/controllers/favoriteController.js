@@ -26,6 +26,7 @@ exports.getFavorites = async (req, res) => {
 };
 
 exports.setFavorite = async (req, res) => {
+  console.log('Request to Toggle Favorite');
   try {
     const gameid = parseInt(req.params.id);
     const userid = req.user.id;

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/GameCard.css'
+import { toggleFavorite } from '../services/API'
 
 interface GameCardProps {
   gameid: number;
@@ -19,12 +20,12 @@ export const GameCard: React.FC<GameCardProps> = ({
   isFavorite = false
 }) => {
   const [favorite, setFavorite] = useState(isFavorite);
-
+  
   return (
     <div className='game-card'>
       <div className='image-container'>
         { imageUrl ? ( <img src={imageUrl}/> ) : ( <span>Image</span> ) }
-        <button onClick={() => setFavorite(!favorite)} className='favorite-btn'>{favorite ? '★' : '☆'}</button>
+        <button onClick={() => {setFavorite(!favorite); toggleFavorite(gameid)} } className='favorite-btn'>{favorite ? '★' : '☆'}</button>
       </div>
 
         <h3>{title}</h3>
