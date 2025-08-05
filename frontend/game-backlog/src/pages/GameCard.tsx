@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import '../styles/GameCard.css'
 
 interface GameCardProps {
+  gameid: number;
   title: string;
   description: string;
   genres: string[];
@@ -10,6 +11,7 @@ interface GameCardProps {
 }
 
 export const GameCard: React.FC<GameCardProps> = ({
+  gameid,
   title,
   description,
   genres,

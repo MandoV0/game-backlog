@@ -1,4 +1,5 @@
 const pool = require("../db");
+const gameController = require("../controllers/gameController")
 
 exports.getFavorites = async (req, res) => {
   try {
@@ -10,10 +11,15 @@ exports.getFavorites = async (req, res) => {
       return res.status(400).send("Invalid limit or offset");
     }
 
-    const query = `SELECT * FROM user_game_favorite WHERE userid = $1 LIMIT $2 OFFSET $3`
+    const query = `SELECT gameid FROM user_game_favorite WHERE userid = $1 LIMIT $2 OFFSET $3`
     const result = await pool.query(query, [userid, limit, offset]);
+    console.log(result.rows);
 
-    return res.json({ results: result.rows });
+    const favoriteGameIds = result.rows.map((row) => row.gameid);
+    console.log(favoriteGameIds);
+    const games = await gameController.getGamesByIds(favoriteGameIds);
+
+    return res.json({ count: games.length, results: games });
   } catch (err) {
     res.status(500).json({ message: "Database error" });
   }

@@ -6,7 +6,7 @@ import Pagination from '../components/Pagination';
 import { fetchData } from '../helpers/fetchGame';
 
 export type Game = {
-  id: number;
+  gameid: number;
   title: string;
   description: string;
   genres: string[];
@@ -32,7 +32,7 @@ export const Home: React.FC = () => {
     Text wow
     <div className='gamecard-grid'>
       {games.map((game, index) => (
-        <GameCard title={game.title} description={game.description} genres={game.genres} imageUrl={game.images[0]} key={index}/>
+        <GameCard gameid={game.gameid} title={game.title} description={game.description} genres={game.genres} imageUrl={game.images[0]} isFavorite={game.isFavorite} key={index}/>
       ))}
     </div>
     <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={setCurrentPage}/>

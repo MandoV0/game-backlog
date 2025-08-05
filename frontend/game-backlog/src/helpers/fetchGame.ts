@@ -17,6 +17,7 @@ export const fetchData = async (page: number, pageSize: number,
       description: game.description,
       genres: game.genres,
       images: game.images,
+      isFavorite: game.is_favorite
     }));
     setTotalPages(Number(Math.ceil(parseInt(data.count) / pageSize)))
     setGames(mappedGames);

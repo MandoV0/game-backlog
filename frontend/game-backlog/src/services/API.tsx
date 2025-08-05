@@ -58,3 +58,7 @@ export async function fetchJson(url: string, options: RequestInit = {}): Promise
   }
   return response.json();
 }
+
+export async function toggleFavorite(gameid: number) {
+  
+}
