@@ -1,32 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { GameContainer } from "../components/GameContainer";
-import { Game } from "./Home";
-import { fetchData, fetchFavorites } from "../helpers/fetchGame";
 import Pagination from "../components/Pagination";
+import { usePaginatedFavorites } from "../hooks/usePaginatedGames";
 
 const pageSize: number = 20;
 
 export const Favorites: React.FC = () => {
-  const [games, setGames] = useState<Game[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalpages] = useState<number>(0);
-  const [error, setError] = useState<string | null>(null);
+  const { games, totalPages, page, setPage, loading, error } =
+    usePaginatedFavorites(20);
 
-  useEffect(() => {
-    fetchFavorites(
-      currentPage,
-      pageSize,
-      setGames,
-      setTotalpages,
-      setError,
-      setLoading
-    );
-  }, [currentPage]);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
-  <div>
-    <GameContainer games={games}/>
-    <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={setCurrentPage}/>
-  </div>);
+    <div>
+      <GameContainer games={games} />
+      <Pagination
+        totalPages={totalPages}
+        currentPage={page}
+        onPageChange={setPage}
+      />
+    </div>
+  );
 };

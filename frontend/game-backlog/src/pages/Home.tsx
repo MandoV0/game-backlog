@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../styles/Home.css";
-import { GameCard } from "../components/GameCard";
-import { getGames } from "../services/API";
 import Pagination from "../components/Pagination";
-import { fetchData } from "../helpers/fetchGame";
 import { GameContainer } from "../components/GameContainer";
+import { usePaginatedGames } from "../hooks/usePaginatedGames";
 
 export type Game = {
   gameid: number;
@@ -18,31 +16,18 @@ export type Game = {
 const pageSize: number = 20;
 
 export const Home: React.FC = () => {
-  const [games, setGames] = useState<Game[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [totalPages, setTotalpages] = useState<number>(0);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const { games, totalPages, page, setPage, loading, error } = usePaginatedGames(20);
 
-  useEffect(() => {
-    fetchData(
-      currentPage,
-      pageSize,
-      setGames,
-      setTotalpages,
-      setError,
-      setLoading
-    );
-  }, [currentPage]);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div>
-      Text wow
       <GameContainer games={games} />
       <Pagination
         totalPages={totalPages}
-        currentPage={currentPage}
-        onPageChange={setCurrentPage}
+        currentPage={page}
+        onPageChange={setPage}
       />
     </div>
   );
