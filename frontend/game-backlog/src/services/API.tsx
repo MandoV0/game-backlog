@@ -70,6 +70,16 @@ export async function toggleFavorite(gameid: number) {
       }
     });
   } catch (err) {
-    console.log('Error while toggling Favorite:', err);
+    console.log('Error while toggling Favorite:', err); 
   }
+}
+
+export async function getFavorites(offset: number = 0, limit: number = 20) {
+  const token = localStorage.getItem('token');
+  return await fetchJson(`http://localhost:3000/favorite?offset=${offset}&limit=${limit}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
 }

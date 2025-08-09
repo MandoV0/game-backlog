@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../styles/GameCard.css'
 import { toggleFavorite } from '../services/API'
 
-interface GameCardProps {
+export interface GameCardProps {
   gameid: number;
   title: string;
   description: string;
