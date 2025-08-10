@@ -8,6 +8,7 @@ import { Login } from './pages/Login';
 import Header from './components/Header';
 import { Games } from './pages/Games';
 import { Favorites } from './pages/Favorites';
+import ProtectedRoute from './routes/ProtectedRoute';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -18,10 +19,10 @@ root.render(
     <BrowserRouter>
       <Header></Header>
       <Routes>
-        <Route path="/" element={<Home/>}/>
+        <Route path="/" element={<ProtectedRoute><Home/></ProtectedRoute>}/>
         <Route path="/login" element={<Login/>}/>
-        <Route path="/games" element={<Games/>}/>
-        <Route path="/favorites" element={<Favorites/>}/>
+        <Route path="/games" element={<ProtectedRoute><Games/></ProtectedRoute>}/>
+        <Route path="/favorites" element={<ProtectedRoute><Favorites/></ProtectedRoute>}/>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

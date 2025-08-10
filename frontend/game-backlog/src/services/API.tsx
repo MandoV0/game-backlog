@@ -43,7 +43,7 @@ export async function login(email: string = "", password: string = "") {
       throw new Error(data.message || data.error || 'Login Failed');
     }
     
-    localStorage.setItem('token', data.jwtToken);
+    localStorage.setItem('accessToken', data.jwtToken);
     return data;
   } catch (error) {
     console.error('Login error:', error);
