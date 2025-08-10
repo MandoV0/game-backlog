@@ -1,5 +1,21 @@
 const pool = require("../db");
 
+/**
+ * Returns a paginated list of games, including ratings, images, genres,
+ * and if each game is marked as a favorite by the authenticated user.
+ *
+ * @async
+ * @param {Object} req - Request object.
+ * @param {string} [req.query.limit=10] - Max number of games to return.
+ * @param {string} [req.query.offset=0] - Number of games to skip.
+ * @param {Object} [req.user] - Authenticated user object (optional).
+ * @param {number} [req.user.id] - User ID of the authenticated user.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} Sends:
+ * - 400 if pagination parameters are invalid
+ * - 200 with `{ count, results }` where `results` is an array of game objects
+ * - 500 on database error
+ */
 exports.getGames = async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 10;
@@ -39,9 +55,9 @@ exports.getGames = async (req, res) => {
 
     favoriteIds = favResult.rows.map((row) => row.gameid);
 
-    games = games.map(game => ({
+    games = games.map((game) => ({
       ...game,
-      is_favorite: userid ? favoriteIds.includes(game.gameid) : false
+      is_favorite: userid ? favoriteIds.includes(game.gameid) : false,
     }));
 
     res.json({ count, results: games });
@@ -51,6 +67,19 @@ exports.getGames = async (req, res) => {
   }
 };
 
+
+/**
+ * Returns a single game by its ID, including its ratings, images, and genres.
+ *
+ * @async
+ * @param {Object} req - Request object.
+ * @param {string} req.params.id - ID of the game to fetch.
+ * @param {Object} res - Response object.
+ * @returns {Promise<void>} Sends:
+ * - 400 if the game ID is invalid
+ * - 200 with game details
+ * - 500 on database error
+ */
 exports.getGameWithId = async (req, res) => {
   try {
     const gameId = parseInt(req.params.id);
@@ -80,6 +109,18 @@ exports.getGameWithId = async (req, res) => {
   }
 };
 
+/**
+ * Returns multiple games by a comma-separated list of IDs.
+ *
+ * @async
+ * @param {Object} req - Request object.
+ * @param {string} req.params.ids - Comma-separated list of game IDs.
+ * @param {Object} res - Response object.
+ * @returns {Promise<void>} Sends:
+ * - 400 if IDs are invalid
+ * - 200 with `{ count, results }`
+ * - 500 on database error
+ */
 exports.bulkGetGamesWithId = async (req, res) => {
   try {
     const ids = req.params.ids.split(",").map((id) => parseInt(id));

@@ -1,5 +1,5 @@
 export async function getGames(offset: number = 0, limit: number = 20) {
-  const token = localStorage.getItem('token');
+  const token = getAccessToken();
 
   return await fetchJson(
     `http://localhost:3000/games?offset=${offset}&limit=${limit}`,
@@ -61,7 +61,7 @@ export async function fetchJson(url: string, options: RequestInit = {}): Promise
 
 export async function toggleFavorite(gameid: number) {
   try {
-    const token = localStorage.getItem('token');
+    const token = getAccessToken();
     const response = await fetch(`http://localhost:3000/favorite/${gameid}`, {
       method: "POST",
       headers: {
@@ -75,11 +75,19 @@ export async function toggleFavorite(gameid: number) {
 }
 
 export async function getFavorites(offset: number = 0, limit: number = 20) {
-  const token = localStorage.getItem('token');
+  const token = getAccessToken();
   return await fetchJson(`http://localhost:3000/favorite?offset=${offset}&limit=${limit}`, {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     }
   });
+}
+
+function getAccessToken() {
+  return localStorage.getItem('accessToken');
+}
+
+function getRefreshToken() {
+  return localStorage.getItem('refreshToken');
 }
