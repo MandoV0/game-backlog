@@ -67,7 +67,6 @@ exports.getGames = async (req, res) => {
   }
 };
 
-
 /**
  * Returns a single game by its ID, including its ratings, images, and genres.
  *
@@ -102,7 +101,12 @@ exports.getGameWithId = async (req, res) => {
             WHERE g.gameid = $1 GROUP BY g.gameid, g.title, g.description;`;
 
     const result = await pool.query(query, [gameId]);
-    res.json(result.rows);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Game not found" });
+    }
+
+    res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).send("Database error");

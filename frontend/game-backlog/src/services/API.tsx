@@ -84,6 +84,26 @@ export async function getFavorites(offset: number = 0, limit: number = 20) {
   });
 }
 
+export async function getGameById(gameid: string) {
+  const token = getAccessToken();
+  return await fetchJson(`http://localhost:3000/games/${gameid}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+}
+
+export async function getReviewsByGameId(gameid: number) {
+  const token = getAccessToken();
+  return await fetchJson(`http://localhost:3000/reviews?gameid=${gameid}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+}
+
 function getAccessToken() {
   return localStorage.getItem('accessToken');
 }

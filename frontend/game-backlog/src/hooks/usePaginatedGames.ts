@@ -1,4 +1,3 @@
-// hooks/usePaginatedGames.ts
 import { usePaginatedData } from "./usePaginatedData";
 import { getGames, getFavorites } from "../services/API";
 

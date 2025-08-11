@@ -21,7 +21,7 @@ root.render(
       <Routes>
         <Route path="/" element={<ProtectedRoute><Home/></ProtectedRoute>}/>
         <Route path="/login" element={<Login/>}/>
-        <Route path="/games" element={<ProtectedRoute><Games/></ProtectedRoute>}/>
+        <Route path="/games/:gameid" element={<ProtectedRoute><Games/></ProtectedRoute>}/>
         <Route path="/favorites" element={<ProtectedRoute><Favorites/></ProtectedRoute>}/>
       </Routes>
     </BrowserRouter>

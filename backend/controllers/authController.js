@@ -79,7 +79,7 @@ exports.login = async (req, res) => {
     console.log(err);
     res.status(500).json({ message: "Server error during login" });
   }
-};
+}
 
 /**
  * Handles user registration by validating input, checking for duplicate accounts,
@@ -145,4 +145,4 @@ exports.register = async (req, res) => {
     console.log(err);
     res.status(500).json({ error: "Server error during registration" });
   }
-};
+}

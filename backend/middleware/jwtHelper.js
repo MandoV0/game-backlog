@@ -12,7 +12,7 @@ const REFRESH_SECRET_KEY = 'MySuperSecretKeyForSigningRefresh';
  * @returns {string} A signed JWT access token valid for 2 hours.
  */
 export const generateAccessToken = (userid, username, email) => {
-  return jwt.sign({ id: userid, username: username, email: email}, SECRET_KEY,  { expiresIn: '2h' });
+  return jwt.sign({ id: userid, username: username, email: email}, ACCESS_SECRET_KEY,  { expiresIn: '2h' });
 };
 
 /**
