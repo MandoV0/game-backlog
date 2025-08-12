@@ -1,27 +1,22 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import "../styles/Games.css";
-import { getGameById, postReview } from "../services/API";
 import { useGame } from "../hooks/useGame";
+import { useReview } from "../hooks/useReview";
 import ReviewModal from "../components/ReviewModal";
+import ReviewCard from "../components/ReviewCard";
+import { useReviewAction } from "../hooks/useReviewAction";
+import "../styles/Games.css";
 
 export const Games = () => {
   const { gameid } = useParams<{ gameid: string }>();
-  const { game, loading, error } = useGame(gameid);
+  const { game, loading: gameLoading, error: gameError } = useGame(gameid);
+  const { review, loading: reviewLoading, error: reviewError} = useReview(gameid);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const { submitReview } = useReviewAction(gameid);
 
-  if (loading) return <div>Loading game info...</div>;
-  if (error) return <div>{error}</div>;
+  if (gameLoading || reviewLoading) return <div>Loading game info...</div>;
+  if (gameError || reviewError) return <div>{gameError} Error</div>;
   if (!game) return <div>No game found.</div>;
-
-  const handleReviewSubmit = (rating: number, reviewText: string) => {
-    if (!gameid) {
-      console.error("Missing gameid, can't post review");
-      return;
-    }
-    postReview(gameid, rating, reviewText);
-    setIsModalOpen(false);
-  };
 
   return (
     <div className="games-container">
@@ -31,6 +26,17 @@ export const Games = () => {
           alt={game.title}
           className="game-image"
         />
+        {review && (
+          <ReviewCard
+            avgReview={review.avgReview}
+            totalReviews={review.totalReviews}
+            oneStarReviews={review.oneStarReviews}
+            twoStarReviews={review.twoStarReviews}
+            threeStarReviews={review.threeStarReviews}
+            fourStarReviews={review.fourStarReviews}
+            fiveStarReviews={review.fiveStarReviews}
+          />
+        )}
       </div>
       <div className="right-div">
         <div className="game-info-container">
@@ -48,7 +54,10 @@ export const Games = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         gameTitle={game.title}
-        onSubmit={handleReviewSubmit}
+        onSubmit={async (rating, text) => {
+          await submitReview(rating, text);
+          setIsModalOpen(false);
+        }}
       />
     </div>
   );

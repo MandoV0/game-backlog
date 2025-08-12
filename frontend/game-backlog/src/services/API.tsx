@@ -100,9 +100,9 @@ export async function getGameById(gameid: string) {
   });
 }
 
-export async function getReviewsByGameId(gameid: number) {
+export async function getReviewsByGameId(gameid: string) {
   const token = getAccessToken();
-  return await fetchJson(`http://localhost:3000/reviews?gameid=${gameid}`, {
+  return await fetchJson(`http://localhost:3000/review/stats/${gameid}`, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
