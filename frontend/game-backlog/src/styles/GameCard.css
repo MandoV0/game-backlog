@@ -1,19 +1,20 @@
 .game-card {
-  background: #f8f9fa;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-  border-radius: 12px;
+  background: var(--color-card-bg);
+  box-shadow: var(--shadow-light);
+  border-radius: var(--radius-medium);
   border: 1px solid #565656;
-  padding: 1rem;
-  margin: 0.5rem;
+  padding: var(--gap-medium);
+  margin: var(--gap-small);
   width: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .game-card:hover {
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow-medium);
   transform: translateY(-5px);
 }
 
@@ -21,9 +22,9 @@
   width: 100%;
   max-width: 300px;
   height: auto;
-  border-radius: 8px;
+  border-radius: var(--radius-small);
   object-fit: cover;
-  margin-bottom: 1rem;
+  margin-bottom: var(--gap-medium);
 }
 
 .image-container {
@@ -36,9 +37,9 @@
 
 .favorite-btn {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  background: #fff;
+  top: var(--gap-small);
+  right: var(--gap-small);
+  background: var(--color-card-bg);
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
@@ -52,8 +53,8 @@
 }
 
 .genre-text {
-  background-color: #6c757d;
-  color: #fff;
+  background-color: var(--color-text-secondary);
+  color: var(--color-card-bg);
   border-radius: 999px;
   padding: 0.2rem 0.7rem;
   margin: 0.2rem;

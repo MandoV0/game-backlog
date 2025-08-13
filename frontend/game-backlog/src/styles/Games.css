@@ -2,34 +2,96 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
-  width: 100vw;
+  align-items: flex-start;
+  padding: var(--gap-large);
+  gap: 30px;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  box-sizing: border-box;
 }
 
 .left-div {
-  width: 25vw;
-  height: 100vh;
+  width: 25%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
+  gap: var(--gap-large);
+  position: sticky;
+  top: var(--gap-large);
 }
 
 .right-div {
-  width: 75vw;
-  height: 100vh;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+  width: 70%;
   display: flex;
+  flex-direction: column;
+  gap: var(--gap-large);
 }
 
 .game-image {
-  border-radius: 10px;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-  width: 300px;
-  height: 400px;
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-medium);
+  width: 100%;
+  max-width: 300px;
+  height: auto;
   object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.game-image:hover {
+  transform: scale(1.03);
+}
+
+.game-info-container {
+  background-color: var(--color-card-bg);
+  padding: var(--gap-large) var(--gap-large);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-light);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-medium);
+  width: 100%;
+}
+
+.game-info-container h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: var(--color-primary);
+}
+
+.game-info-container p {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.game-info-container span {
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
+}
+
+.game-info-container button {
+  align-self: start;
+  padding: 10px 20px;
+  background-color: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-small);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.game-info-container button:hover {
+  background-color: var(--color-secondary);
+  transform: translateY(-2px);
+}
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-large);
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 10px;
 }

@@ -1,55 +1,92 @@
-.game-review-container {
-  background-color: burlywood;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  border-radius: 5px;
-  padding: 10px;
-}
-
 .review-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin: 15px;
+  gap: var(--gap-large);
+  margin: var(--gap-large);
+  padding: var(--gap-small);
+  background-color: var(--color-bg-strong);
+  border-radius: var(--radius-small);
+  width: 100%;
+}
+
+.game-review-container {
+  background-color: var(--color-card-bg);
+  box-shadow: var(--shadow-light);
+  border-radius: var(--radius-large);
+  padding: var(--gap-medium) var(--gap-large);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.game-review-container\:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-medium);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--gap-small);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.stars {
+  color: var(--color-accent);
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  width: 60px;
+  text-align: right;
+}
+
+.review-comment {
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  margin: 0;
 }
 
 .review-card {
-  justify-content: center;
-  align-items: center;
   display: flex;
   flex-direction: column;
-  background-color: #eac6f4;
-  border-radius: 10px;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  width: 200px;
+  background-color: var(--color-card-bg);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-light);
+  padding: var(--gap-large);
+  width: 240px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-card\:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-medium);
 }
 
 .avg-score {
-
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--gap-medium);
 }
 
 .review-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 5px;
-}
-
-.stars {
-
+  gap: var(--gap-medium);
+  margin-bottom: var(--gap-small);
 }
 
 .review-bar {
   flex: 1;
-  min-width: 100px;
-  height: 12px;
-  background-color: #ddd;
-  border-radius: 5px;
+  height: 14px;
+  background-color: #e0e0e0;
+  border-radius: 7px;
   overflow: hidden;
 }
 
 .review-fill {
   height: 100%;
-  background-color: #f5a623;
+  background: linear-gradient(90deg, var(--color-accent), #ffdd75);
+  border-radius: 7px 0 0 7px;
   transition: width 0.3s ease;
 }
