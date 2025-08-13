@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/Review.css";
+import "../styles/GameReview.css";
 
 export interface ReviewProps {
   totalReviews: number;
@@ -11,54 +11,35 @@ export interface ReviewProps {
   avgReview: number;
 }
 
-const ReviewCard: React.FC<ReviewProps> = ({
-  totalReviews,
-  oneStarReviews,
-  twoStarReviews,
-  threeStarReviews,
-  fourStarReviews,
-  fiveStarReviews,
-  avgReview
-}) => {
+const ReviewCard: React.FC<{ review: ReviewProps }> = ({ review }) => {
+  const getPercentage = (count: number) => {
+    return review.totalReviews > 0 ? (count / review.totalReviews) * 100 : 0;
+  };
+
+  const ratings = [
+    { stars: "★★★★★", count: review.fiveStarReviews },
+    { stars: "★★★★☆", count: review.fourStarReviews },
+    { stars: "★★★☆☆", count: review.threeStarReviews },
+    { stars: "★★☆☆☆", count: review.twoStarReviews },
+    { stars: "★☆☆☆☆", count: review.oneStarReviews },
+  ];
+
   return (
     <div className="review-card">
       <h3>Avg Rating</h3>
-      <div className="avg-score">{avgReview}</div>
-
-      <div className="stars-container">
-        <div className="review-row">
-          <span className="stars">★★★★★</span>
+      <div className="avg-score">{review.avgReview}</div>
+      {ratings.map((rating, id) => (
+        <div className="review-row" key={id}>
+          <span className="stars">{rating.stars}</span>
           <div className="review-bar">
-            <div className="review-fill"></div>
+            <div
+              className="review-fill"
+              style={{ width: `${getPercentage(rating.count)}%` }}
+            ></div>
           </div>
         </div>
-        <div className="review-row">
-          <span className="stars">★★★★☆</span>
-          <div className="review-bar">
-            <div className="review-fill"></div>
-          </div>
-        </div>
-        <div className="review-row">
-          <span className="stars">★★★☆☆</span>
-          <div className="review-bar">
-            <div className="review-fill"></div>
-          </div>
-        </div>
-        <div className="review-row">
-          <span className="stars">★★☆☆☆</span>
-          <div className="review-bar">
-            <div className="review-fill"></div>
-          </div>
-        </div>
-        <div className="review-row">
-          <span className="stars">★☆☆☆☆</span>
-          <div className="review-bar">
-            <div className="review-fill"></div>
-          </div>
-        </div>
-      </div>
-
-      <div className="total-reviews">Total Reviews: {totalReviews}</div>
+      ))}
+      Total Reviews: {review.totalReviews}
     </div>
   );
 };

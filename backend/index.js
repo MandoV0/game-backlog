@@ -6,7 +6,7 @@ const { getGames, getGameWithId, bulkGetGamesWithId } = require('./controllers/g
 const { login, register } = require('./controllers/authController')
 const { isTokenValid, optionalAuth } = require('./middleware/jwtHelper');
 const { setFavorite, getFavorites } = require('./controllers/favoriteController');
-const { createReview, getReviewStats } = require('./controllers/reviewController');
+const { createReview, getReviewStats, getGameReviews } = require('./controllers/reviewController');
 
 const app = express()
 app.use(cors({
@@ -36,6 +36,7 @@ app.get('/favorite', isTokenValid, getFavorites);
 
 app.post('/review', isTokenValid, createReview);
 app.get('/review/stats/:id', getReviewStats);
+app.get('/review/:id', getGameReviews);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));

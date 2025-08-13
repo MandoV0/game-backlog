@@ -58,3 +58,21 @@ exports.getReviewStats = async (req, res) => {
     return res.status(500).json({ error: "Server error." });
   }
 };
+
+exports.getGameReviews = async (req, res) => {
+  try {
+    const gameid = parseInt(req.params.id);
+
+    if (!gameid) {
+      return res.status(400).json({ error: "Missing required field, gameid." });
+    }
+
+    const query = `SELECT * FROM user_review WHERE gameid = $1`;
+    const result = await pool.query(query, [gameid]);
+
+    return res.status(200).json(result.rows[0]);
+  } catch (err) {
+    console.log("[getGameRevies] ERROR:", err);
+    return res.status(500).json({ error: "Server error." });
+  }
+}

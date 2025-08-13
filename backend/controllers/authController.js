@@ -6,7 +6,7 @@ const { generateAccessToken } = require("../middleware/jwtHelper");
 
 /**
  * Handles user login by validating credentials and returning a signed JWT access token.
- * 
+ *
  * @async
  * @param {Object} req - Request object.
  * @param {string} req.body.email - The users email address.
@@ -16,7 +16,7 @@ const { generateAccessToken } = require("../middleware/jwtHelper");
  *  - 400 if email or password is missing
  *  - 401 if credentials are invalid
  *  - 200 with a signed JWT token and user details if successful
- * 
+ *
  * @example
  * // POST /login
  * // Request body:
@@ -49,7 +49,9 @@ exports.login = async (req, res) => {
     const result = await pool.query(query, [email]);
 
     if (result.rows.length == 0) {
-      return res.status(401).json({message: "The Username or Password is wrong."});
+      return res
+        .status(401)
+        .json({ message: "The Username or Password is wrong." });
     }
 
     const user = result.rows[0];
@@ -60,11 +62,17 @@ exports.login = async (req, res) => {
     console.log(password);
     console.log(isMatch);
 
-    if (!isMatch) { 
-      return res.status(401).json({message: "The Username or Password is wrong."});
+    if (!isMatch) {
+      return res
+        .status(401)
+        .json({ message: "The Username or Password is wrong." });
     }
 
-    const jwtToken = generateAccessToken(user.userid, user.username, user.email);
+    const jwtToken = generateAccessToken(
+      user.userid,
+      user.username,
+      user.email
+    );
 
     res.status(200).json({
       message: "Logged in successfully.",
@@ -79,7 +87,7 @@ exports.login = async (req, res) => {
     console.log(err);
     res.status(500).json({ message: "Server error during login" });
   }
-}
+};
 
 /**
  * Handles user registration by validating input, checking for duplicate accounts,
@@ -120,11 +128,18 @@ exports.register = async (req, res) => {
         .json({ error: "Email, username, and password are required." });
     }
 
-    const existQuery = `SELECT * FROM users WHERE email = $1`;
+    const existQuery = `SELECT * FROM users WHERE email = $1 OR username $2`;
     const existResult = await pool.query(existQuery, [email]);
 
     if (existResult.rows.length !== 0) {
-      return res.status(401).send("An Account with this email already exists.");
+      if (existResult.rows.some((u) => u.email === email)) {
+        return res
+          .status(401)
+          .send("An account with this email already exists.");
+      }
+      if (existResult.rows.some((u) => u.username === username)) {
+        return res.status(401).send("Username is already taken.");
+      }
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
@@ -145,4 +160,4 @@ exports.register = async (req, res) => {
     console.log(err);
     res.status(500).json({ error: "Server error during registration" });
   }
-}
+};

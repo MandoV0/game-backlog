@@ -6,6 +6,9 @@ import ReviewModal from "../components/ReviewModal";
 import ReviewCard from "../components/ReviewCard";
 import { useReviewAction } from "../hooks/useReviewAction";
 import "../styles/Games.css";
+import ReviewList from "../components/ReviewList";
+
+import GameReview, { reviews } from "../components/GameReview"; /* JUST FOR TESTING */
 
 export const Games = () => {
   const { gameid } = useParams<{ gameid: string }>();
@@ -28,13 +31,7 @@ export const Games = () => {
         />
         {review && (
           <ReviewCard
-            avgReview={review.avgReview}
-            totalReviews={review.totalReviews}
-            oneStarReviews={review.oneStarReviews}
-            twoStarReviews={review.twoStarReviews}
-            threeStarReviews={review.threeStarReviews}
-            fourStarReviews={review.fourStarReviews}
-            fiveStarReviews={review.fiveStarReviews}
+            review={review}
           />
         )}
       </div>
@@ -49,6 +46,7 @@ export const Games = () => {
           <span>{game.genres?.join(", ")}</span>
           <button onClick={() => setIsModalOpen(true)}>Write a Review</button>
         </div>
+        <ReviewList reviews={reviews}></ReviewList>
       </div>
       <ReviewModal
         isOpen={isModalOpen}
