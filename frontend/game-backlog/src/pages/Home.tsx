@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../styles/Home.css";
+import "../styles/Layout.css";
 import Pagination from "../components/Pagination";
 import { GameContainer } from "../components/GameContainer";
 import { usePaginatedGames } from "../hooks/usePaginatedGames";

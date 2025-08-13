@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { GameCard, GameCardProps } from "./GameCard";
 import { Game } from '../pages/Home';
-import '../styles/GameContainer.css';
+import '../styles/Layout.css';
 
 interface GamesProps {
   games: Game[];

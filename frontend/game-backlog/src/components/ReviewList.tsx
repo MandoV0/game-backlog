@@ -1,6 +1,6 @@
 import React from 'react';
 import GameReview, {ReviewComment} from './GameReview';
-import '../styles/GameReview.css';
+import '../styles/Cards.css';
 
 export interface ReviewListProps {
   reviews: ReviewComment[];

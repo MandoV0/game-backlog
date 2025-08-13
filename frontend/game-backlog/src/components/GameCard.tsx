@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../styles/GameCard.css'
+import '../styles/Cards.css'
 import { toggleFavorite } from '../services/API'
 import { Link } from 'react-router-dom';
 

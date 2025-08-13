@@ -1,0 +1,8 @@
+.gamecard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: var(--gap-large);
+  padding: var(--gap-medium);
+  background-color: var(--color-bg);
+  min-height: 100vh;
+}

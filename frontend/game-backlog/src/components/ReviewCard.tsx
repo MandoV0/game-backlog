@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/GameReview.css";
+import "../styles/Cards.css";
 
 export interface ReviewProps {
   totalReviews: number;

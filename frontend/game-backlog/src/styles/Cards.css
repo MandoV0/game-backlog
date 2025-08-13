@@ -1,3 +1,74 @@
+.game-card {
+  background: var(--color-card-bg);
+  box-shadow: var(--shadow-light);
+  border-radius: var(--radius-medium);
+  border: 1px solid var(--color-bg-strong);
+  padding: var(--gap-medium);
+  margin: var(--gap-small);
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: var(--font-base);
+}
+
+.game-card:hover {
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-5px);
+}
+
+.game-card img {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  border-radius: var(--radius-small);
+  object-fit: cover;
+  margin-bottom: var(--gap-medium);
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.favorite-btn {
+  position: absolute;
+  top: var(--gap-small);
+  right: var(--gap-small);
+  background: var(--color-card-bg);
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  box-shadow: var(--shadow-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.favorite-btn:hover {
+  transform: scale(1.1);
+}
+
+.genre-text {
+  background-color: var(--color-primary);
+  color: var(--color-card-bg);
+  border-radius: 999px;
+  padding: var(--gap-small) var(--gap-medium);
+  margin: var(--gap-small);
+  font-size: 0.95rem;
+  display: inline-block;
+  font-weight: 500;
+}
+
 .review-list {
   display: flex;
   flex-direction: column;
@@ -15,9 +86,10 @@
   border-radius: var(--radius-large);
   padding: var(--gap-medium) var(--gap-large);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: var(--font-base);
 }
 
-.game-review-container\:hover {
+.game-review-container:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-medium);
 }
@@ -55,9 +127,10 @@
   padding: var(--gap-large);
   width: 240px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: var(--font-base);
 }
 
-.review-card\:hover {
+.review-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-medium);
 }
@@ -79,7 +152,7 @@
 .review-bar {
   flex: 1;
   height: 14px;
-  background-color: #e0e0e0;
+  background-color: var(--color-bg-strong);
   border-radius: 7px;
   overflow: hidden;
 }
