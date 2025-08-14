@@ -11,7 +11,7 @@ interface JwtPayload {
  * @returns {boolean} 'true' if the token exists and has not expired, otherwise 'false'.
  */
 export function isTokenValid(): boolean {
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem('token');
   if (!token) {
     return false;
   }
