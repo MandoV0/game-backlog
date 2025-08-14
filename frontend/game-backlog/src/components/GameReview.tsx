@@ -1,5 +1,6 @@
 import React from "react";
 import '../styles/Cards.css';
+import { GameReview as ApiGameReview } from '../hooks/useGameReviews';
 
 export interface ReviewComment {
   username: string;
@@ -9,38 +10,19 @@ export interface ReviewComment {
   date: string;
 }
 
-/* Fake Reviews for testing */
-export const reviews: ReviewComment[] = [
-  {
-    username: "Alice",
-    rating: 5,
-    comment: "Absolutely loved it! Fast shipping and great quality.",
-    date: "2025-08-10",
-  },
-  {
-    username: "Bob",
-    rating: 3,
-    comment: "It's okay, but not what I expected for the price.",
-    date: "2025-08-08",
-  },
-  {
-    username: "Charlie",
-    rating: 4,
-    comment: "Solid purchase. Would buy again.",
-    date: "2025-08-05",
-  },
-];
-
 interface GameReviewProps {
-  review: ReviewComment;
+  review: ApiGameReview;
 }
 
 const GameReview: React.FC<GameReviewProps> = ({ review }) => {
   return (
     <div className="game-review-container">
-      {review.username} : {review.rating} Stars
-      <p>{review.comment}</p>
-      <small>{review.date}</small>
+      <div className="review-header">
+        <span>{review.username}</span>
+        <span className="stars">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span>
+      </div>
+      <p className="review-comment">{review.review_text}</p>
+      <small>{new Date(review.review_date).toLocaleDateString()}</small>
     </div>
   )
 }

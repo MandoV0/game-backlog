@@ -128,8 +128,8 @@ exports.register = async (req, res) => {
         .json({ error: "Email, username, and password are required." });
     }
 
-    const existQuery = `SELECT * FROM users WHERE email = $1 OR username $2`;
-    const existResult = await pool.query(existQuery, [email]);
+    const existQuery = `SELECT * FROM users WHERE email = $1 OR username = $2`;
+    const existResult = await pool.query(existQuery, [email, username]);
 
     if (existResult.rows.length !== 0) {
       if (existResult.rows.some((u) => u.email === email)) {

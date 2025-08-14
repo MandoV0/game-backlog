@@ -1,9 +1,10 @@
 import React from 'react';
 import GameReview, {ReviewComment} from './GameReview';
+import { GameReview as ApiGameReview } from '../hooks/useGameReviews';
 import '../styles/Cards.css';
 
 export interface ReviewListProps {
-  reviews: ReviewComment[];
+  reviews: ApiGameReview[];
 }
 
 const ReviewList: React.FC<ReviewListProps>= ({ reviews }) => {

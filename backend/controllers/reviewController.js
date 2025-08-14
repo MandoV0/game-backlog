@@ -34,11 +34,11 @@ exports.createReview = async (req, res) => {
 exports.getReviewStats = async (req, res) => {
   try {
     const gameid = parseInt(req.params.id);
-  
+
     if (!gameid) {
       return res.status(400).json({ error: "Missing required field, gameid." });
     }
-  
+
     const query = `SELECT 
       ROUND(AVG(rating), 2) AS avg_review,
         COUNT(*) AS total_reviews,
@@ -49,9 +49,9 @@ exports.getReviewStats = async (req, res) => {
         COUNT(CASE WHEN rating = 5 THEN 1 END) AS five_star
       FROM user_review
       WHERE gameid = $1;`;
-  
+
     const result = await pool.query(query, [gameid]);
-  
+
     return res.status(200).json(result.rows[0]);
   } catch (err) {
     console.log(err);
@@ -67,12 +67,12 @@ exports.getGameReviews = async (req, res) => {
       return res.status(400).json({ error: "Missing required field, gameid." });
     }
 
-    const query = `SELECT * FROM user_review WHERE gameid = $1`;
+    const query = `SELECT ur.*, u.username FROM user_review ur JOIN users u ON ur.userid = u.userid WHERE ur.gameid = $1 ORDER BY ur.review_date DESC`;
     const result = await pool.query(query, [gameid]);
 
-    return res.status(200).json(result.rows[0]);
+    return res.status(200).json(result.rows);
   } catch (err) {
     console.log("[getGameRevies] ERROR:", err);
     return res.status(500).json({ error: "Server error." });
   }
-}
+};

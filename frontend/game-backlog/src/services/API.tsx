@@ -110,6 +110,16 @@ export async function getReviewsByGameId(gameid: string) {
   });
 }
 
+export async function getGameReviews(gameid: string) {
+  const token = getAccessToken();
+  return await fetchJson(`http://localhost:3000/review/${gameid}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+}
+
 export async function postReview(
   gameid: string,
   rating: number,
