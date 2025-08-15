@@ -9,6 +9,8 @@
  * isMissing('hello', 'world');     // false
  * isMissing('  ', 'abc');          // true
  */
-export const isMissing = (...fields) => {
+const isMissing = (...fields) => {
     return fields.some(f => !f?.trim());
 };
+
+module.exports = { isMissing }

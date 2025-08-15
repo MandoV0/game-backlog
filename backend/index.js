@@ -4,7 +4,7 @@ const cors = require('cors');
 
 const { getGames, getGameWithId, bulkGetGamesWithId } = require('./controllers/gameController');
 const { login, register } = require('./controllers/authController')
-const { isTokenValid, optionalAuth } = require('./middleware/jwtHelper');
+const { isTokenValid, optionalAuth } = require('./middleware/auth');
 const { setFavorite, getFavorites } = require('./controllers/favoriteController');
 const { createReview, getReviewStats, getGameReviews } = require('./controllers/reviewController');
 

@@ -1,8 +1,8 @@
 const pool = require("../db");
 const bcrypt = require("bcrypt");
 
-const { isMissing } = require("../helpers/isMissing");
-const { generateAccessToken } = require("../middleware/jwtHelper");
+const authService = require("../services/authService");
+const logger = require("../utils/logger");
 
 /**
  * Handles user login by validating credentials and returning a signed JWT access token.
@@ -38,54 +38,13 @@ const { generateAccessToken } = require("../middleware/jwtHelper");
 exports.login = async (req, res) => {
   try {
     const { password, email } = req.body;
-
-    if (isMissing(password, email)) {
-      return res
-        .status(400)
-        .json({ message: "Email and password are required." });
-    }
-
-    const query = `SELECT * FROM users WHERE email = $1`;
-    const result = await pool.query(query, [email]);
-
-    if (result.rows.length == 0) {
-      return res
-        .status(401)
-        .json({ message: "The Username or Password is wrong." });
-    }
-
-    const user = result.rows[0];
-    const storedpasswordHash = user.password_hash;
-    const isMatch = await bcrypt.compare(password, storedpasswordHash);
-
-    console.log(storedpasswordHash);
-    console.log(password);
-    console.log(isMatch);
-
-    if (!isMatch) {
-      return res
-        .status(401)
-        .json({ message: "The Username or Password is wrong." });
-    }
-
-    const jwtToken = generateAccessToken(
-      user.userid,
-      user.username,
-      user.email
-    );
-
-    res.status(200).json({
-      message: "Logged in successfully.",
-      jwtToken,
-      user: {
-        id: user.userid,
-        username: user.username,
-        email: user.email,
-      },
-    });
+    const result = await authService.login(email, password);
+    res.status(200).json(result);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Server error during login" });
+    logger.error('Error in auth controller:', err);
+    const statusCode = err.statusCode || 500;
+    const message = err.message || 'Internal server error during login';
+    res.status(statusCode).json({ message });
   }
 };
 
@@ -121,43 +80,12 @@ exports.login = async (req, res) => {
 exports.register = async (req, res) => {
   try {
     const { email, username, password } = req.body;
-
-    if (isMissing(email, username, password)) {
-      return res
-        .status(400)
-        .json({ error: "Email, username, and password are required." });
-    }
-
-    const existQuery = `SELECT * FROM users WHERE email = $1 OR username = $2`;
-    const existResult = await pool.query(existQuery, [email, username]);
-
-    if (existResult.rows.length !== 0) {
-      if (existResult.rows.some((u) => u.email === email)) {
-        return res
-          .status(401)
-          .send("An account with this email already exists.");
-      }
-      if (existResult.rows.some((u) => u.username === username)) {
-        return res.status(401).send("Username is already taken.");
-      }
-    }
-
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    const insertQuery = `INSERT INTO users (email, username, password_hash) VALUES ($1, $2, $3) RETURNING userid`;
-    const insertResult = await pool.query(insertQuery, [
-      email,
-      username,
-      passwordHash,
-    ]);
-
-    const newUserId = insertResult.rows[0].userid;
-
-    return res
-      .status(201)
-      .json({ message: "Registration successful", userId: newUserId });
+    const result = await authService.register(email, username, password);
+    res.status(201).json(result);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Server error during registration" });
+    logger.error('Error in auth controller:', err);
+    const statusCode = err.statusCode || 500;
+    const message = err.message || 'Internal server error during registration';
+    res.status(statusCode).json({ message });
   }
 };

@@ -1,4 +1,10 @@
 const pool = require("../db");
+const {
+  validatePagination,
+  validateGameId,
+  validateGameIds,
+} = require("../helpers/validatePagination");
+const logger = require("../utils/logger");
 
 /**
  * Returns a paginated list of games, including ratings, images, genres,
@@ -18,52 +24,17 @@ const pool = require("../db");
  */
 exports.getGames = async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 10;
-    const offset = parseInt(req.query.offset) || 0;
-    const userid = req.user?.id || null;
+    const { limit, offset } = validatePagination(req.query);
+    const userId = req.user?.id || null;
 
-    if (limit < 1 || offset < 0) {
-      return res.status(400).send("Invalid limit or offset");
-    }
+    const result = await gameService.getGames(limit, offset, userId);
 
-    // Total games count
-    const countQuery = "SELECT COUNT(*) FROM game";
-    const countResult = await pool.query(countQuery);
-    const count = parseInt(countResult.rows[0].count, 10);
-
-    const gameQuery = `
-      SELECT
-        g.gameid, 
-        g.title,
-        g.description,
-        ROUND(COALESCE(AVG(ur.rating), 0), 2) AS avg_rating,
-        ARRAY_REMOVE(ARRAY_AGG(DISTINCT gi.url), NULL) AS images,
-        ARRAY_REMOVE(ARRAY_AGG(DISTINCT ge.name), NULL) AS genres
-      FROM game g
-        LEFT JOIN user_review ur ON g.gameid = ur.gameid
-        LEFT JOIN game_image gi ON g.gameid = gi.gameid
-        LEFT JOIN game_genre gg ON g.gameid = gg.gameid
-        LEFT JOIN genre ge ON gg.genreid = ge.genreid
-      GROUP BY g.gameid, g.title LIMIT $1 OFFSET $2;`;
-
-    const gameResult = await pool.query(gameQuery, [limit, offset]);
-    let games = gameResult.rows;
-
-    let favoriteIds = [];
-    const favQuery = `SELECT gameid FROM user_game_favorite WHERE userid = $1`;
-    const favResult = await pool.query(favQuery, [userid]);
-
-    favoriteIds = favResult.rows.map((row) => row.gameid);
-
-    games = games.map((game) => ({
-      ...game,
-      is_favorite: userid ? favoriteIds.includes(game.gameid) : false,
-    }));
-
-    res.json({ count, results: games });
+    res.json(result);
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Database error");
+    logger.error("Error in getGames controller:", err);
+    const statusCode = err.statusCode || 500;
+    const message = err.message || "Internal server error during getGames";
+    res.status(statusCode).json({ message });
   }
 };
 
@@ -81,35 +52,14 @@ exports.getGames = async (req, res) => {
  */
 exports.getGameWithId = async (req, res) => {
   try {
-    const gameId = parseInt(req.params.id);
-
-    if (isNaN(gameId)) {
-      return res.status(400).send("Invalid game id");
-    }
-
-    const query = `SELECT 
-              g.title,
-              g.description,
-              ROUND(COALESCE(AVG(ur.rating), 0), 2) AS avg_rating,
-              ARRAY_REMOVE(ARRAY_AGG(DISTINCT gi.url), NULL) AS images,
-              ARRAY_REMOVE(ARRAY_AGG(DISTINCT ge.name), NULL) AS genres
-            FROM game g
-            LEFT JOIN user_review ur ON g.gameid = ur.gameid
-            LEFT JOIN game_image gi ON g.gameid = gi.gameid
-            LEFT JOIN game_genre gg ON g.gameid = gg.gameid
-            LEFT JOIN genre ge ON gg.genreid = ge.genreid
-            WHERE g.gameid = $1 GROUP BY g.gameid, g.title, g.description;`;
-
-    const result = await pool.query(query, [gameId]);
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Game not found" });
-    }
-
-    res.json(result.rows[0]);
+    const gameId = validateGameId(req.params.id);
+    const game = await gameService.getGameWithId(gameId);
+    res.json(game);
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Database error");
+    logger.error("Error in getGameWithId controller:", err);
+    const statusCode = err.statusCode || 500;
+    const message = err.message || "Internal server error during getGameWithId";
+    res.status(statusCode).json({ message });
   }
 };
 
@@ -127,16 +77,17 @@ exports.getGameWithId = async (req, res) => {
  */
 exports.bulkGetGamesWithId = async (req, res) => {
   try {
-    const ids = req.params.ids.split(",").map((id) => parseInt(id));
-    if (!ids.length || ids.some(isNaN)) {
-      return res.status(400).send("Invalid game ids");
-    }
+    const gameIds = validateGameIds(req.params.ids);
+    const games = await gameService.getGamesByIds(gameIds);
 
-    const games = await exports.getGamesByIds(ids);
-    res.json({ count: games.length, results: games });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Database error");
+    const result = { count: games.length, results: games };
+    res.json(result);
+  } catch (error) {
+    logger.error("Error in bulkGetGamesWithId controller:", error);
+    const statusCode = error.statusCode || 500;
+    const message =
+      error.message || "Internal server error during bulkGetGamesWithId";
+    res.status(statusCode).json({ message });
   }
 };
 
