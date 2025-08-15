@@ -11,12 +11,11 @@ interface JwtPayload {
  * @returns {boolean} 'true' if the token exists and has not expired, otherwise 'false'.
  */
 export function isTokenValid(): boolean {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
   if (!token) {
     return false;
   }
 
-  
   try {
     const { exp } = jwtDecode<JwtPayload>(token);
     const now = Math.floor(Date.now() / 1000);

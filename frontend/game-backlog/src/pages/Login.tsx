@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { login } from '../services/API';
+import { AuthService } from '../services/AuthService';
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -11,7 +11,7 @@ export const Login: React.FC = () => {
     setMessage('');
 
     try {
-      const data = await login(email, password);
+      const data = await AuthService.login({email, password});
       console.log(data);
 
       setMessage('Login Complete!');

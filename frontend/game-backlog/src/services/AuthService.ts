@@ -20,7 +20,7 @@ export class AuthService {
   static async login(credentials: LoginInformation): Promise<AuthResponse> {
     const data = await apiClient.post<AuthResponse>("/auth/login", credentials);
 
-    localStorage.setItem("token", data.jwtToken);
+    localStorage.setItem("accessToken", data.jwtToken);
 
     return data;
   }
@@ -30,10 +30,12 @@ export class AuthService {
   }
 
   static logout(): void {
-    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
   }
 
   static getToken(): string | null {
-    return localStorage.getItem('token');
+    return localStorage.getItem('accessToken');
   }
 }
+
+export const authService = new AuthService();

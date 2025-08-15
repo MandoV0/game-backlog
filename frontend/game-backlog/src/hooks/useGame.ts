@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { mapGame } from "../services/GameMapper";
-import { getGameById } from "../services/API";
+import { GameService } from "../services/GameService";
 
 export function useGame(gameid: string | undefined) {
   const [game, setGame] = useState<ReturnType<typeof mapGame> | null>(null);
@@ -22,7 +22,7 @@ export function useGame(gameid: string | undefined) {
       setError(null);
 
       try {
-        const data = await getGameById(gameid);
+        const data = await GameService.getGameById(gameid);
 
         setGame(mapGame(data));
       } catch {

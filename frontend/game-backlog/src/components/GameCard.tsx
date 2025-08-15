@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/Cards.css'
-import { toggleFavorite } from '../services/API'
+import { GameService } from '../services/GameService';
 import { Link } from 'react-router-dom';
 
 export interface GameCardProps {
@@ -28,7 +28,7 @@ export const GameCard: React.FC<GameCardProps> = ({
         <Link to={`/games/${gameid}`}>
           { imageUrl ? ( <img src={imageUrl}/> ) : ( <span>Image</span> ) }
         </Link>
-        <button onClick={() => {setFavorite(!favorite); toggleFavorite(gameid)} } className='favorite-btn'>{favorite ? '★' : '☆'}</button>
+        <button onClick={() => {setFavorite(!favorite); GameService.toggleFavorite(gameid)} } className='favorite-btn'>{favorite ? '★' : '☆'}</button>
       </div>
 
         <h3>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { mapReview } from "../services/GameMapper";
-import { getReviewsByGameId } from "../services/API";
+import { GameService } from "../services/GameService";
 
 export function useReview(gameid: string | undefined) {
   const [review, setReview] = useState<ReturnType<typeof mapReview> | null>(null);
@@ -22,7 +22,7 @@ export function useReview(gameid: string | undefined) {
       setError(null);
 
       try {
-        const data = await getReviewsByGameId(gameid);
+        const data = await GameService.getReviewStats(gameid);
 
         setReview(mapReview(data));
       } catch {

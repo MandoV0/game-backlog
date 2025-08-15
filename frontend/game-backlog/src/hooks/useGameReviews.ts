@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getGameReviews } from "../services/API";
+import { GameService } from "../services/GameService";
 
 export interface GameReview {
   reviewid: number;
@@ -27,7 +27,8 @@ export function useGameReviews(gameid: string | undefined) {
     setError(null);
 
     try {
-      const data = await getGameReviews(gameid);
+      const data = await GameService.getGameReviews(gameid);
+
       setReviews(data);
     } catch (err: any) {
       setError(err.message || "Failed to load reviews.");

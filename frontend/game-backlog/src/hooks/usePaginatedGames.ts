@@ -1,8 +1,8 @@
 import { usePaginatedData } from "./usePaginatedData";
-import { getGames, getFavorites } from "../services/API";
+import { GameService } from "../services/GameService";
 
 export const usePaginatedGames = (pageSize?: number) =>
-  usePaginatedData(getGames, 1, pageSize);
+  usePaginatedData(GameService.getGames, 1, pageSize);
 
 export const usePaginatedFavorites = (pageSize?: number) =>
-  usePaginatedData(getFavorites, 1, pageSize);
+  usePaginatedData(GameService.getFavorites, 1, pageSize);
