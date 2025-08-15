@@ -3,8 +3,9 @@ const {
   validatePagination,
   validateGameId,
   validateGameIds,
-} = require("../helpers/validatePagination");
+} = require("../utils/validation");
 const logger = require("../utils/logger");
+const gameService = require("../services/gameService");
 
 /**
  * Returns a paginated list of games, including ratings, images, genres,
@@ -32,9 +33,7 @@ exports.getGames = async (req, res) => {
     res.json(result);
   } catch (err) {
     logger.error("Error in getGames controller:", err);
-    const statusCode = err.statusCode || 500;
-    const message = err.message || "Internal server error during getGames";
-    res.status(statusCode).json({ message });
+    res.status(500).json({ message: "Internal server error during getGames" });
   }
 };
 
@@ -57,9 +56,7 @@ exports.getGameWithId = async (req, res) => {
     res.json(game);
   } catch (err) {
     logger.error("Error in getGameWithId controller:", err);
-    const statusCode = err.statusCode || 500;
-    const message = err.message || "Internal server error during getGameWithId";
-    res.status(statusCode).json({ message });
+    res.status(500).json({ message: "Internal server error during getGameWithId" });
   }
 };
 
@@ -82,35 +79,8 @@ exports.bulkGetGamesWithId = async (req, res) => {
 
     const result = { count: games.length, results: games };
     res.json(result);
-  } catch (error) {
-    logger.error("Error in bulkGetGamesWithId controller:", error);
-    const statusCode = error.statusCode || 500;
-    const message =
-      error.message || "Internal server error during bulkGetGamesWithId";
-    res.status(statusCode).json({ message });
+  } catch (err) {
+    logger.error("Error in bulkGetGamesWithId controller:", err);
+    res.status(500).json({ message: "Internal server error during bulkGetGamesWithId" });
   }
-};
-
-exports.getGamesByIds = async (ids) => {
-  if (!ids.length || ids.some(isNaN)) {
-    throw new Error("Invalid Game ids");
-  }
-
-  const query = `SELECT 
-          g.gameid,
-          g.title,
-          g.description,
-          ROUND(COALESCE(AVG(ur.rating), 0), 2) AS avg_rating,
-          ARRAY_REMOVE(ARRAY_AGG(DISTINCT gi.url), NULL) AS images,
-          ARRAY_REMOVE(ARRAY_AGG(DISTINCT ge.name), NULL) AS genres
-          FROM game g
-          LEFT JOIN user_review ur ON g.gameid = ur.gameid
-          LEFT JOIN game_image gi ON g.gameid = gi.gameid
-          LEFT JOIN game_genre gg ON g.gameid = gg.gameid
-          LEFT JOIN genre ge ON gg.genreid = ge.genreid
-          WHERE g.gameid = ANY($1)
-          GROUP BY g.gameid, g.title, g.description;`;
-
-  const result = await pool.query(query, [ids]);
-  return result.rows;
 };

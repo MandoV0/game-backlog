@@ -1,4 +1,4 @@
-const pool = require("./db");
+const pool = require("../db");
 
 let games = require("./games.json");
 let fakeUsers = require("./FakeUserData.json");

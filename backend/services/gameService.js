@@ -111,6 +111,60 @@ class GameService {
       return [];
     }
   }
+
+  /* FAVORITES */
+  async getUserFavorites(limit, offset, userId) {
+    try {
+      const favoritesQuery = `SELECT gameid FROM user_game_favorite WHERE userid = $1 LIMIT $2 OFFSET $3`;
+      const result = await pool.query(favoritesQuery, [userId, limit, offset]);
+
+      const favoriteGameIds = result.rows.map((row) => row.gameid);
+
+      const games = await this.getGamesByIds(favoriteGameIds);
+      return { count: games.length, results: games };
+    } catch (err) {
+      logger.error("Error fetching user favorites:", err);
+      throw new Error("Server error fetching user favorites");
+    }
+  }
+
+  async setFavorite(userId, gameId) {
+    try {
+      const gameExists = await pool.query(
+        `SELECT * FROM game WHERE gameid = $1`,
+        [gameId]
+      );
+
+      if (gameExists.rowCount === 0) {
+        logger.info(`Game with ID ${gameId} not found.`);
+        throw new Error("Game not found");
+      }
+
+      const isFavorite = await pool.query(
+        `SELECT * FROM user_game_favorite WHERE gameid = $1 AND userid = $2`,
+        [gameId, userId]
+      );
+
+      if (isFavorite.rowCount > 0) {
+        const deleteFavorite = await pool.query(
+          `DELETE FROM user_game_favorite WHERE gameid = $1 AND userid = $2`,
+          [gameId, userId]
+        );
+        return { message: "Game unfavorited" };
+      }
+
+      const query = `
+        INSERT INTO user_game_favorite (userid, gameid)
+        VALUES ($1, $2)
+        ON CONFLICT (userid, gameid) DO NOTHING
+      `;
+      await pool.query(query, [userId, gameId]);
+      return { message: "Game favorited successfully" };
+    } catch (err) {
+      logger.error("Error setting favorite:", err);
+      throw new Error("Server error setting favorite");
+    }
+  }
 }
 
 module.exports = new GameService();
