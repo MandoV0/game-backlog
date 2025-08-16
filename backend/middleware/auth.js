@@ -11,10 +11,26 @@ const logger = require("../utils/logger");
  * @returns {void} Sends a 401 response if the token is missing, malformed, invalid or expired.
  */
 const isTokenValid = (req, res, next) => {
-  try {
-    const authHeader = req.headers["authorization"];
+  const authHeader = req.headers["authorization"];
+  const ip = req.ip;
+  const userAgent = req.get('User-Agent');
 
+  logger.info('Token validation attempt', {
+    hasAuthHeader: !!authHeader,
+    ip,
+    userAgent: userAgent ? userAgent.substring(0, 50) + '...' : 'missing',
+    path: req.path,
+    method: req.method
+  });
+
+  try {
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      logger.warn('Token validation failed - no or malformed token', {
+        hasAuthHeader: !!authHeader,
+        authHeaderPrefix: authHeader ? authHeader.substring(0, 10) + '...' : 'none',
+        ip,
+        path: req.path
+      });
       return res.status(401).json({
         error: "Authentication required",
         message: "No or malformed token provided",
@@ -24,6 +40,10 @@ const isTokenValid = (req, res, next) => {
     const token = authHeader.split(" ")[1];
 
     if (!token) {
+      logger.warn('Token validation failed - empty token', {
+        ip,
+        path: req.path
+      });
       return res.status(401).json({
         error: "Authentication required",
         message: "Token is missing",
@@ -33,9 +53,23 @@ const isTokenValid = (req, res, next) => {
     const decoded = verifyToken(token, JWT_CONFIG.ACCESS_SECRET_KEY);
 
     req.user = decoded;
+    
+    logger.info('Token validation successful', {
+      userId: decoded.id,
+      username: decoded.username,
+      ip,
+      path: req.path
+    });
+    
     next();
   } catch (err) {
-    logger.error("Error occurred during token validation", err.message);
+    logger.error("Token validation error", {
+      error: err.message,
+      errorName: err.name,
+      ip,
+      path: req.path,
+      stack: err.stack
+    });
 
     if (err.name === "TokenExpiredError") {
       return res.status(401).json({
@@ -67,26 +101,55 @@ const isTokenValid = (req, res, next) => {
  * @param {Function} next - Callback to pass control to the next middleware function.
  */
 const optionalAuth = (req, res, next) => {
-  try {
+  const authHeader = req.headers["authorization"];
+  const ip = req.ip;
+  const userAgent = req.get('User-Agent');
 
-    const authHeader = req.headers["authorization"];
-  
+  logger.debug('Optional token validation attempt', {
+    hasAuthHeader: !!authHeader,
+    ip,
+    userAgent: userAgent ? userAgent.substring(0, 50) + '...' : 'missing',
+    path: req.path,
+    method: req.method
+  });
+
+  try {
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      logger.debug('Optional token validation - no token provided', {
+        ip,
+        path: req.path
+      });
       return next();
     }
-  
+
     const token = authHeader.split(" ")[1];
-  
+
     if (!token) {
+      logger.debug('Optional token validation - empty token', {
+        ip,
+        path: req.path
+      });
       return next();
     }
-  
+
     const decoded = verifyToken(token, JWT_CONFIG.ACCESS_SECRET_KEY);
-  
+
     req.user = decoded;
+    
+    logger.debug('Optional token validation successful', {
+      userId: decoded.id,
+      username: decoded.username,
+      ip,
+      path: req.path
+    });
+    
     next();
   } catch (err) {
-    logger.error("Error occurred during optional token validation", err.message);
+    logger.debug("Optional token validation failed, continuing without auth", {
+      error: err.message,
+      ip,
+      path: req.path
+    });
     next();
   }
 };

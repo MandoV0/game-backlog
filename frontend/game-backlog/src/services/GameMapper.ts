@@ -1,6 +1,7 @@
 export const mapGame = (game: any) => ({
   gameid: game.gameid,
   title: game.title,
+  releasedate: game.releasedate,
   description: game.description,
   genres: game.genres,
   images: game.images,

@@ -12,15 +12,27 @@ import ReviewList from "../components/ReviewList";
 export const Games = () => {
   const { gameid } = useParams<{ gameid: string }>();
   const { game, loading: gameLoading, error: gameError } = useGame(gameid);
-  const { review, loading: reviewLoading, error: reviewError} = useReview(gameid);
-  const { reviews, loading: reviewsLoading, error: reviewsError, refetch: refetchReviews } = useGameReviews(gameid);
+  const {
+    review,
+    loading: reviewLoading,
+    error: reviewError,
+  } = useReview(gameid);
+  const {
+    reviews,
+    loading: reviewsLoading,
+    error: reviewsError,
+    refetch: refetchReviews,
+  } = useGameReviews(gameid);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { submitReview } = useReviewAction(gameid);
 
-  if (gameLoading || reviewLoading || reviewsLoading) return <div>Loading game info...</div>;
-  if (gameError || reviewError || reviewsError) return <div>{gameError || reviewError || reviewsError} Error</div>;
+  if (gameLoading || reviewLoading || reviewsLoading)
+    return <div>Loading game info...</div>;
+  if (gameError || reviewError || reviewsError)
+    return <div>{gameError || reviewError || reviewsError} Error</div>;
   if (!game) return <div>No game found.</div>;
 
+  console.log("Game:", game);
   return (
     <div className="games-container">
       <div className="left-div">
@@ -29,24 +41,26 @@ export const Games = () => {
           alt={game.title}
           className="game-image"
         />
-        {review && (
-          <ReviewCard
-            review={review}
-          />
-        )}
+        {review && <ReviewCard review={review} />}
       </div>
       <div className="right-div">
         <div className="game-info-container">
           <h1>{game.title}</h1>
-          <p>Release Info</p>
+          <p>Release {game.releasedate}</p>
           <p>
             Game Description Game Description Game Description Game Description
             Game Description{" "}
           </p>
-          <span>{game.genres?.join(", ")}</span>
+          <div>
+            {game.genres.map((genre: string, index: number) => (
+              <span className="genre-text" key={index}>
+                {genre}
+              </span>
+            ))}
+          </div>
           <button onClick={() => setIsModalOpen(true)}>Write a Review</button>
         </div>
-        <ReviewList reviews={reviews} />
+          <ReviewList reviews={reviews} />
       </div>
       <ReviewModal
         isOpen={isModalOpen}

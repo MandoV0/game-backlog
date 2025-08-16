@@ -3,6 +3,7 @@ import { apiClient } from "./ApiClient";
 export interface Game {
   gameid: number;
   title: string;
+  releasedate: string;
   description: string;
   genres: string[];
   images: string[];

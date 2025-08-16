@@ -24,19 +24,46 @@ const logger = require("../utils/logger");
  * - 500 on database error
  */
 exports.getFavorites = async (req, res) => {
-  try {
-    const { limit, offset } = validatePagination(req.query);
-    const userid = req.user.id;
+  const { limit, offset } = req.query;
+  const userid = req.user.id;
+  
+  logger.info('Get favorites request', { 
+    limit: parseInt(limit) || 10,
+    offset: parseInt(offset) || 0,
+    userId: userid,
+    ip: req.ip,
+    userAgent: req.get('User-Agent')
+  });
 
+  try {
+    const validatedParams = validatePagination(req.query);
     const favoriteGames = await gameService.getUserFavorites(
-      limit,
-      offset,
+      validatedParams.limit,
+      validatedParams.offset,
       userid
     );
+    
+    logger.info('Get favorites successful', { 
+      userId: userid,
+      favoritesCount: favoriteGames.results.length,
+      totalCount: favoriteGames.count
+    });
+    
     return res.json(favoriteGames);
   } catch (err) {
-    logger.error("Error in getFavorites controller:", err);
-    res.status(500).json({ message: "Database error" });
+    logger.error('Get favorites failed', {
+      limit: parseInt(limit) || 10,
+      offset: parseInt(offset) || 0,
+      userId: userid,
+      error: err.message,
+      stack: err.stack
+    });
+    
+    if (err.message.includes('Limit must be') || err.message.includes('Offset must be')) {
+      res.status(400).json({ message: err.message });
+    } else {
+      res.status(500).json({ message: "Database error" });
+    }
   }
 };
 
@@ -62,14 +89,41 @@ exports.getFavorites = async (req, res) => {
  * // Response: { "message": "Game unfavorited" }
  */
 exports.setFavorite = async (req, res) => {
-  try {
-    const gameid = validateGameId(req.params.id);
-    const userId = req.user.id;
+  const gameid = req.params.id;
+  const userId = req.user.id;
+  
+  logger.info('Set favorite request', { 
+    gameId: gameid,
+    userId: userId,
+    ip: req.ip,
+    userAgent: req.get('User-Agent')
+  });
 
-    const result = await gameService.setFavorite(userId, gameid);
+  try {
+    const validatedGameId = validateGameId(gameid);
+    const result = await gameService.setFavorite(userId, validatedGameId);
+    
+    logger.info('Set favorite successful', { 
+      gameId: validatedGameId,
+      userId: userId,
+      action: result.message
+    });
+    
     return res.json(result);
   } catch (err) {
-    logger.error("Error in setFavorite controller:", err);
-    return res.status(500).json({ message: "Database error" });
+    logger.error('Set favorite failed', {
+      gameId: gameid,
+      userId: userId,
+      error: err.message,
+      stack: err.stack
+    });
+    
+    if (err.message.includes('Invalid game ID')) {
+      return res.status(400).json({ message: err.message });
+    } else if (err.message.includes('Game not found')) {
+      return res.status(404).json({ message: err.message });
+    } else {
+      return res.status(500).json({ message: "Database error" });
+    }
   }
 };

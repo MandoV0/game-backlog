@@ -24,7 +24,12 @@
   width: 70%;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: var(--gap-large);
+  background-color: var(--color-card-bg);
+  box-shadow: var(--shadow-medium);
+  border-radius: var(--radius-medium);
 }
 
 .game-image {
@@ -33,7 +38,9 @@
   width: 100%;
   max-width: 300px;
   height: auto;
+  aspect-ratio: 4/3;
   object-fit: cover;
+  inline-size: 400px;
   transition: transform 0.2s ease;
 }
 
@@ -42,14 +49,12 @@
 }
 
 .game-info-container {
-  background-color: var(--color-card-bg);
   padding: var(--gap-large) var(--gap-large);
-  border-radius: var(--radius-medium);
-  box-shadow: var(--shadow-light);
   display: flex;
   flex-direction: column;
   gap: var(--gap-medium);
   width: 100%;
+  box-sizing: border-box; 
 }
 
 .game-info-container h1 {
@@ -94,4 +99,15 @@
   max-height: 60vh;
   overflow-y: auto;
   padding-right: 10px;
+}
+
+.genre-text {
+  background-color: var(--color-primary);
+  color: #fff !important;
+  border-radius: 999px;
+  padding: var(--gap-small) var(--gap-medium);
+  margin: var(--gap-small);
+  font-size: 0.95rem;
+  display: inline-block;
+  font-weight: 500;
 }
