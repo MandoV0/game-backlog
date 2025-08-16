@@ -1,30 +1,9 @@
 const pool = require("../db");
+const gameModel = require("../models/game");
+const favoritesModel = require("../models/favorite");
 const logger = require("../utils/logger");
 
 class GameService {
-
-  _buildGetGameQuery({ where = "", order = "", limit = "", offset = "" } = {}) {
-    return `
-      SELECT 
-        g.gameid,
-        g.title,
-        g.description,
-        g.releasedate,
-        ROUND(COALESCE(AVG(ur.rating), 0), 2) AS avg_rating,
-        ARRAY_REMOVE(ARRAY_AGG(DISTINCT gi.url), NULL) AS images,
-        ARRAY_REMOVE(ARRAY_AGG(DISTINCT ge.name), NULL) AS genres
-      FROM game g
-        LEFT JOIN user_review ur ON g.gameid = ur.gameid
-        LEFT JOIN game_image gi ON g.gameid = gi.gameid
-        LEFT JOIN game_genre gg ON g.gameid = gg.gameid
-        LEFT JOIN genre ge ON gg.genreid = ge.genreid
-      ${where}
-      GROUP BY g.gameid, g.title, g.description
-      ${order}
-      ${limit}
-      ${offset};
-    `;
-  }
 
   async getGames(limit, offset, userId) {
     logger.info("GameService.getGames called", {
@@ -35,19 +14,11 @@ class GameService {
     });
 
     try {
-      const countQuery = "SELECT COUNT(*) FROM game";
-      const countResult = await pool.query(countQuery);
-      const count = parseInt(countResult.rows[0].count, 10);
-
-      const gameQuery = this._buildGetGameQuery({
-        order: `ORDER BY g.title`,
-        limit: `LIMIT $1`,
-        offset: `OFFSET $2`
-      });
-
-      const gameResult = await pool.query(gameQuery, [limit, offset]);
-      let games = gameResult.rows;
-
+      const gameResult = await gameModel.getAll(limit, offset);
+      const totalCount = await gameModel.getTotalCount();
+      console.log("Game Result:", gameResult);
+      
+      /*
       if (userId) {
         const favoriteIds = await this.getUserFavoriteIds(userId);
         games = games.map((game) => ({
@@ -55,14 +26,9 @@ class GameService {
           is_favorite: favoriteIds.includes(game.gameid),
         }));
       }
+      */
 
-      logger.info("GameService.getGames successful", {
-        gamesCount: games.length,
-        totalCount: count,
-        userId,
-      });
-
-      return { count, results: games };
+      return { total: totalCount, results: gameResult };
     } catch (err) {
       logger.error("GameService.getGames error", {
         limit,
@@ -79,24 +45,15 @@ class GameService {
     logger.info("GameService.getGameWithId called", { gameid });
 
     try {
-      const query = this._buildGetGameQuery({
-        where: `WHERE g.gameid = $1`
-      });
-
-      const result = await pool.query(query, [gameid]);
-      console.log("Result:", result.rows);
-
-      if (result.rows.length === 0) {
-        logger.warn("GameService.getGameWithId game not found", { gameid });
-        throw new Error("Game not found");
-      }
+      const result = await gameModel.getById(gameid);
+      console.log("Result:", result);
 
       logger.info("GameService.getGameWithId successful", {
         gameid,
-        gameTitle: result.rows[0].title,
+        gameTitle: result.title,
       });
 
-      return result.rows[0];
+      return result;
     } catch (err) {
       logger.error("GameService.getGameWithId error", {
         gameid,
@@ -160,11 +117,7 @@ class GameService {
         return [];
       }
 
-      const query = this._buildGetGameQuery({
-        where: `WHERE g.gameid = ANY($1)`
-      });
-
-      const result = await pool.query(query, [gameIds]);
+      const result = await gameModel.getByIds(gameIds);
 
       logger.info("GameService.getGamesByIds successful", {
         requestedCount: gameIds.length,
@@ -182,30 +135,6 @@ class GameService {
     }
   }
 
-  async getUserFavoriteIds(userId) {
-    logger.debug("GameService.getUserFavoriteIds called", { userId });
-
-    try {
-      const favQuery = `SELECT gameid FROM user_game_favorite WHERE userid = $1`;
-      const favResult = await pool.query(favQuery, [userId]);
-      const favoriteIds = favResult.rows.map((row) => row.gameid);
-
-      logger.debug("GameService.getUserFavoriteIds successful", {
-        userId,
-        favoriteCount: favoriteIds.length,
-      });
-
-      return favoriteIds;
-    } catch (err) {
-      logger.error("GameService.getUserFavoriteIds error", {
-        userId,
-        error: err.message,
-        stack: err.stack,
-      });
-      return [];
-    }
-  }
-
   /* FAVORITES */
   async getUserFavorites(limit, offset, userId) {
     logger.info("GameService.getUserFavorites called", {
@@ -215,19 +144,14 @@ class GameService {
     });
 
     try {
-      const favoritesQuery = `SELECT gameid FROM user_game_favorite WHERE userid = $1 LIMIT $2 OFFSET $3`;
-      const result = await pool.query(favoritesQuery, [userId, limit, offset]);
-
-      const favoriteGameIds = result.rows.map((row) => row.gameid);
-
-      const games = await this.getGamesByIds(favoriteGameIds);
-
+      const favorites = await favoritesModel.getUserFavorites(userId, limit, offset);
+      console.log("Favorites:", favorites);
       logger.info("GameService.getUserFavorites successful", {
         userId,
-        favoritesCount: games.length,
+        favoritesCount: favorites.total,
       });
 
-      return { count: games.length, results: games };
+      return { total: favorites.total, results: favorites.results };
     } catch (err) {
       logger.error("GameService.getUserFavorites error", {
         limit,

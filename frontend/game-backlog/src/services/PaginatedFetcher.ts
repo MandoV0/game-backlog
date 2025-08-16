@@ -7,9 +7,9 @@ export async function fetchPaginatedData(
 ) {
   const offset = (page - 1) * pageSize;
   const data = await fetchFunction(offset, pageSize);
-
+  console.log("Fetched Data:", data);
   return {
     games: data.results.map(mapGame),
-    totalPages: Math.ceil(Number(data.count) / pageSize)
+    totalPages: Math.ceil(Number(data.total) / pageSize)
   };
 }

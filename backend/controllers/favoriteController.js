@@ -20,7 +20,7 @@ const logger = require("../utils/logger");
  * @param {Object} res - Response object.
  * @returns {Promise<void>} Sends:
  * - 400 if limit or offset are invalid
- * - 200 with `{ count, results }` where results is an array of favorite game objects
+ * - 200 with `{ total, results }` where results is an array of favorite game objects
  * - 500 on database error
  */
 exports.getFavorites = async (req, res) => {
@@ -45,8 +45,7 @@ exports.getFavorites = async (req, res) => {
     
     logger.info('Get favorites successful', { 
       userId: userid,
-      favoritesCount: favoriteGames.results.length,
-      totalCount: favoriteGames.count
+      totalCount: favoriteGames.total
     });
     
     return res.json(favoriteGames);

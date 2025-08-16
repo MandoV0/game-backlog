@@ -20,7 +20,7 @@ const gameService = require("../services/gameService");
  * @param {Object} res - Express response object.
  * @returns {Promise<void>} Sends:
  * - 400 if pagination parameters are invalid
- * - 200 with `{ count, results }` where `results` is an array of game objects
+ * - 200 with `{ total, results }` where `results` is an array of game objects
  * - 500 on database error
  */
 exports.getGames = async (req, res) => {
@@ -40,11 +40,9 @@ exports.getGames = async (req, res) => {
     const result = await gameService.getGames(validatedParams.limit, validatedParams.offset, userId);
 
     logger.info('Get games successful', { 
-      gamesCount: result.results.length,
-      totalCount: result.count,
       userId: userId
     });
-
+    
     res.json(result);
   } catch (err) {
     logger.error('Get games failed', {
@@ -120,7 +118,7 @@ exports.getGameWithId = async (req, res) => {
  * @param {Object} res - Response object.
  * @returns {Promise<void>} Sends:
  * - 400 if IDs are invalid
- * - 200 with `{ count, results }`
+ * - 200 with `{ total, results }`
  * - 500 on database error
  */
 exports.bulkGetGamesWithId = async (req, res) => {
@@ -136,7 +134,7 @@ exports.bulkGetGamesWithId = async (req, res) => {
     const validatedGameIds = validateGameIds(gameIds);
     const games = await gameService.getGamesByIds(validatedGameIds);
 
-    const result = { count: games.length, results: games };
+    const result = { total: games.length, results: games };
     
     logger.info('Bulk get games successful', { 
       requestedIds: validatedGameIds,
