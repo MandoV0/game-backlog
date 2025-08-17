@@ -1,9 +1,4 @@
-const pool = require("../db");
-const {
-  validatePagination,
-  validateGameId,
-  validateGameIds,
-} = require("../utils/validation");
+const { validatePagination, validateGameId, validateGameIds } = require("../utils/validation");
 const logger = require("../utils/logger");
 const gameService = require("../services/gameService");
 
@@ -26,38 +21,19 @@ const gameService = require("../services/gameService");
 exports.getGames = async (req, res) => {
   const { limit, offset } = req.query;
   const userId = req.user?.id || null;
-  
-  logger.info('Get games request', { 
-    limit: parseInt(limit) || 10,
-    offset: parseInt(offset) || 0,
-    userId: userId,
-    ip: req.ip,
-    userAgent: req.get('User-Agent')
-  });
+
+  logger.info('Get games request', { limit: limit, offset: offset, userId: userId });
 
   try {
     const validatedParams = validatePagination(req.query);
     const result = await gameService.getGames(validatedParams.limit, validatedParams.offset, userId);
 
-    logger.info('Get games successful', { 
-      userId: userId
-    });
-    
+    logger.info('Get games successful', { userId: userId });
+
     res.json(result);
   } catch (err) {
-    logger.error('Get games failed', {
-      limit: parseInt(limit) || 10,
-      offset: parseInt(offset) || 0,
-      userId: userId,
-      error: err.message,
-      stack: err.stack
-    });
-    
-    if (err.message.includes('Limit must be') || err.message.includes('Offset must be')) {
-      res.status(400).json({ message: err.message });
-    } else {
-      res.status(500).json({ message: "Internal server error during getGames" });
-    }
+    logger.error('Get games failed', { limit: parseInt(limit) || 10, offset: parseInt(offset) || 0, userId: userId, error: err.message, stack: err.stack });
+    res.status(500).json({ message: "Internal server error during getGames" });
   }
 };
 
@@ -75,37 +51,19 @@ exports.getGames = async (req, res) => {
  */
 exports.getGameWithId = async (req, res) => {
   const gameId = req.params.id;
-  
-  logger.info('Get game by ID request', { 
-    gameId: gameId,
-    ip: req.ip,
-    userAgent: req.get('User-Agent')
-  });
+
+  logger.info('Get game by ID request', { gameId: gameId });
 
   try {
     const validatedGameId = validateGameId(gameId);
     const game = await gameService.getGameWithId(validatedGameId);
-    
-    logger.info('Get game by ID successful', { 
-      gameId: validatedGameId,
-      gameTitle: game.title
-    });
-    
+
+    logger.info('Get game by ID successful', { gameId: validatedGameId, gameTitle: game.title });
+
     res.json(game);
   } catch (err) {
-    logger.error('Get game by ID failed', {
-      gameId: gameId,
-      error: err.message,
-      stack: err.stack
-    });
-    
-    if (err.message.includes('Invalid game ID')) {
-      res.status(400).json({ message: err.message });
-    } else if (err.message.includes('Game not found')) {
-      res.status(404).json({ message: err.message });
-    } else {
-      res.status(500).json({ message: "Internal server error during getGameWithId" });
-    }
+    logger.error('Get game by ID failed', { gameId: gameId, error: err.message, stack: err.stack });
+    res.status(500).json({ message: "Internal server error during getGameWithId" });
   }
 };
 
@@ -123,36 +81,20 @@ exports.getGameWithId = async (req, res) => {
  */
 exports.bulkGetGamesWithId = async (req, res) => {
   const gameIds = req.params.ids;
-  
-  logger.info('Bulk get games request', { 
-    gameIds: gameIds,
-    ip: req.ip,
-    userAgent: req.get('User-Agent')
-  });
+
+  logger.info('Bulk get games request', { gameIds: gameIds });
 
   try {
     const validatedGameIds = validateGameIds(gameIds);
     const games = await gameService.getGamesByIds(validatedGameIds);
 
     const result = { total: games.length, results: games };
-    
-    logger.info('Bulk get games successful', { 
-      requestedIds: validatedGameIds,
-      returnedGames: games.length
-    });
-    
+
+    logger.info('Bulk get games successful', { requestedIds: validatedGameIds, returnedGames: games.length });
+
     res.json(result);
   } catch (err) {
-    logger.error('Bulk get games failed', {
-      gameIds: gameIds,
-      error: err.message,
-      stack: err.stack
-    });
-    
-    if (err.message.includes('Invalid game IDs')) {
-      res.status(400).json({ message: err.message });
-    } else {
-      res.status(500).json({ message: "Internal server error during bulkGetGamesWithId" });
-    }
+    logger.error('Bulk get games failed', { gameIds: gameIds, error: err.message, stack: err.stack });
+    res.status(500).json({ message: "Internal server error during bulkGetGamesWithId" });
   }
 };

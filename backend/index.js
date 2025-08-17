@@ -1,12 +1,13 @@
 const express = require('express');
 const pool = require('./db');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 
 const { getGames, getGameWithId, bulkGetGamesWithId } = require('./controllers/gameController');
 const { login, register } = require('./controllers/authController')
 const { isTokenValid, optionalAuth } = require('./middleware/auth');
 const { setFavorite, getFavorites } = require('./controllers/favoriteController');
-const { createReview, getGameRatings, getReviewsForGame } = require('./controllers/reviewController');
+const { createReview, getGameRatings, getReviewsForGame, updateReview } = require('./controllers/reviewController');
 
 const app = express()
 app.use(cors({
@@ -18,7 +19,14 @@ app.use(cors({
   optionsSuccessStatus: 200
 }));
 
-app.use(express.json())
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000,  // 1 minute
+  max: 60,              // max 60 requests per window per IP
+  message: 'Too many requests, please try again later.'
+});
+
+app.use(apiLimiter);
+app.use(express.json());
 
 app.get('/', async(req, res) => {
     res.send("API is running.");

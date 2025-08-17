@@ -106,28 +106,29 @@ const validateLogin = (data) => {
  * @returns {Object} Validated data
  */
 const validateReview = (data) => {
-  const { gameid, rating, review_text } = data;
+  const { rating, review_text } = data;
 
-  if (isMissing(gameid, rating, review_text)) {
-    throw new Error('Game ID, rating, and review text are required');
+  if (isMissing(review_text)) {
+    throw new Error('Review text is required');
   }
 
-  const gameId = parseInt(gameid);
-  const ratingNum = parseInt(rating);
-
-  if (isNaN(gameId) || gameId <= 0) {
-    throw new Error('Invalid game ID');
-  }
-
-  if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
-    throw new Error('Rating must be between 1 and 5');
-  }
+  const ratingNum = validateRating(rating);
 
   if (review_text.length < 10 || review_text.length > 1000) {
     throw new Error('Review text must be between 10 and 1000 characters');
   }
 
-  return { gameid: gameId, rating: ratingNum, review_text: review_text.trim() };
+  return { rating: ratingNum, review_text: review_text };
+};
+
+const validateRating = (rating) => {
+  const ratingNum = parseInt(rating);
+
+  if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
+    throw new Error('Rating must be between 1 and 5');
+  }
+
+  return ratingNum;
 };
 
 /**

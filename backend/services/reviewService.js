@@ -1,6 +1,7 @@
 const pool = require("../db");
 const reviewModel = require("../models/review");
 const logger = require("../utils/logger");
+const { validateGameId, validateReview } = require("../utils/validation");
 
 class ReviewService {
   /**
@@ -31,6 +32,20 @@ class ReviewService {
     } catch (error) {
       logger.error(`Error fetching ratings for gameId: ${gameId} - ${error.message}`);
       throw new Error("Error fetching ratings");
+    }
+  }
+
+  async createGameReview(userId, gameId, data) {
+    logger.info(`Creating review for userId: ${userId}, gameId: ${gameId}`);
+    try {
+      const { review_text, rating } = data;
+      const validatedGameId = validateGameId(gameId);
+      const validatedData = validateReview({ review_text, rating });
+      const result = await reviewModel.createGameReview(userId, validatedGameId, validatedData.review_text, validatedData.rating);
+      return result;
+    } catch (error) {
+      logger.error(`Error creating review for userId: ${userId}, gameId: ${gameId} - ${error.message}`);
+      throw new Error("Error creating review");
     }
   }
 }

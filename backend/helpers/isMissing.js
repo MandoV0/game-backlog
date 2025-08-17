@@ -10,7 +10,7 @@
  * isMissing('  ', 'abc');          // true
  */
 const isMissing = (...fields) => {
-    return fields.some(f => !f?.trim());
+  return fields.some(f => f === undefined || f === null || (typeof f === "string" && f.trim() === ""));
 };
 
 module.exports = { isMissing }

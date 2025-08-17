@@ -23,6 +23,30 @@ class Review {
    const result = await pool.query(query, [gameId]);
    return result.rows[0];
   }
+
+  /*
+  static async updateReview(userId, reviewId, data) {
+    console.log(`Updating review for userId: ${userId}, reviewId: ${reviewId} with review data: ${JSON.stringify(data)}`);
+    const query = `UPDATE user_review SET rating = $1, review_text = $2 WHERE reviewid = $3 AND userid = $4 RETURNING *`;
+    const values = [data.rating, data.review_text, reviewId, userId];
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  }
+  */
+  
+  /**
+   * Creates/Updates a game review.
+   * @param {string} userId - The ID of the user.
+   * @param {string} gameId - The ID of the game.
+   * @param {string} reviewText - A review between 10 and 1000 characters.
+   * @param {string} rating - A rating between 1 and 5.
+   */
+  static async createGameReview(userId, gameId, reviewText, rating) {
+    const query = `INSERT INTO user_review (userid, gameid, review_text, rating) VALUES ($1, $2, $3, $4) ON CONFLICT (userid, gameid) DO UPDATE SET review_text = $3, rating = $4 RETURNING *`;
+    const values = [userId, gameId, reviewText, rating];
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  }
 }
 
 module.exports = Review;
