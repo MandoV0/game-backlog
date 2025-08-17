@@ -11,28 +11,26 @@ export function useReview(gameid: string | undefined) {
     if (!gameid) {
       setReview(null);
       setLoading(false);
+      setError(null);
       return;
     }
 
     setLoading(true);
     setError(null);
 
-    const fetchGame = async () => {
-      setLoading(true);
-      setError(null);
-
+    const fetchReviewStats = async () => {
       try {
         const data = await GameService.getReviewStats(gameid);
-
         setReview(mapReview(data));
-      } catch {
-        setError("Failed to load reviews.");
+      } catch (err) {
+        console.error("Failed to load review stats:", err);
+        setError("Failed to load review statistics.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchGame();
+    fetchReviewStats();
   }, [gameid]);
 
   return { review, loading, error };

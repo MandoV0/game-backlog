@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { fetchPaginatedData } from "../services/PaginatedFetcher";
+import { mapGame } from "../services/GameMapper";
 
 export function usePaginatedData(
   fetchFunc: (offset: number, limit: number) => Promise<any>,
   initialPage: number = 1,
-  pageSize: number = 20
+  pageSize: number = 20,
+  mapFunction: (item: any) => any,
 ) {
   const [games, setGames] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -18,13 +20,14 @@ export function usePaginatedData(
       setError(null);
 
       try {
-        const { games, totalPages } = await fetchPaginatedData(
+        const { results, total } = await fetchPaginatedData(
           fetchFunc,
           page,
-          pageSize
+          pageSize,
+          mapFunction
         );
-        setGames(games);
-        setTotalPages(totalPages);
+        setGames(results);
+        setTotalPages(total);
       } catch (err: any) {
         setError(err.message || "Failed to load data");
       } finally {

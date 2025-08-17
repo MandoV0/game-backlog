@@ -41,7 +41,6 @@ class Favorite {
   static async getUserFavorites(userId, limit = 20, offset = 0) {
     const favoriteIds = await this._getUserFavoriteIDs(userId);
     const result = await gameModel.getByIds(favoriteIds, limit, offset);
-    console.log("\n\n\b ", result);
     const totalFavorites = await pool.query(`SELECT COUNT(*) FROM user_game_favorite WHERE userid = $1`, [userId]);
     return { total: parseInt(totalFavorites.rows[0].count, 10), results: result };
   }

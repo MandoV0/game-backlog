@@ -60,7 +60,7 @@ export const Games = () => {
           </div>
           <button onClick={() => setIsModalOpen(true)}>Write a Review</button>
         </div>
-          <ReviewList reviews={reviews} />
+          <ReviewList reviews={reviews}/>
       </div>
       <ReviewModal
         isOpen={isModalOpen}

@@ -1,5 +1,7 @@
 const pool = require("../db");
 const logger = require("../utils/logger");
+const reviewService = require("../services/reviewService");
+const { validateGameId, validatePagination } = require("../utils/validation");
 
 /**
  * Posts a user review for a specific game.
@@ -65,45 +67,26 @@ exports.createReview = async (req, res) => {
   }
 };
 
-exports.getReviewStats = async (req, res) => {
+exports.getGameRatings = async (req, res) => {
   const gameid = req.params.id;
 
-  logger.info('Get review stats request', {
+  logger.info('Get game ratings request', {
     gameId: gameid,
     ip: req.ip,
     userAgent: req.get('User-Agent')
   });
 
   try {
-    const validatedGameId = parseInt(gameid);
+    const validatedGameId = validateGameId(gameid);
 
-    if (!validatedGameId || isNaN(validatedGameId)) {
-      logger.warn('Get review stats invalid game ID', {
-        gameId: gameid
-      });
-      return res.status(400).json({ error: "Missing required field, gameid." });
-    }
-
-    const query = `SELECT 
-      ROUND(AVG(rating), 2) AS avg_review,
-        COUNT(*) AS total_reviews,
-        COUNT(CASE WHEN rating = 1 THEN 1 END) AS one_star,
-        COUNT(CASE WHEN rating = 2 THEN 1 END) AS two_star,
-        COUNT(CASE WHEN rating = 3 THEN 1 END) AS three_star,
-        COUNT(CASE WHEN rating = 4 THEN 1 END) AS four_star,
-        COUNT(CASE WHEN rating = 5 THEN 1 END) AS five_star
-      FROM user_review
-      WHERE gameid = $1;`;
-
-    const result = await pool.query(query, [validatedGameId]);
-
+    const result = await reviewService.getRatingsForGame(validatedGameId);
     logger.info('Get review stats successful', {
       gameId: validatedGameId,
-      totalReviews: result.rows[0].total_reviews,
-      avgRating: result.rows[0].avg_review
+      totalReviews: result.total_reviews,
+      avgRating: result.avg_review
     });
 
-    return res.status(200).json(result.rows[0]);
+    return res.status(200).json(result);
   } catch (err) {
     logger.error('Get review stats failed', {
       gameId: gameid,
@@ -114,37 +97,19 @@ exports.getReviewStats = async (req, res) => {
   }
 };
 
-exports.getGameReviews = async (req, res) => {
+exports.getReviewsForGame = async (req, res) => {
   const gameid = req.params.id;
-
-  logger.info('Get game reviews request', {
-    gameId: gameid,
-    ip: req.ip,
-    userAgent: req.get('User-Agent')
-  });
+  const userId = req.user?.id || null;
 
   try {
-    const validatedGameId = parseInt(gameid);
-
-    if (!validatedGameId || isNaN(validatedGameId)) {
-      logger.warn('Get game reviews invalid game ID', {
-        gameId: gameid
-      });
-      return res.status(400).json({ error: "Missing required field, gameid." });
-    }
-
-    const query = `SELECT ur.*, u.username FROM user_review ur JOIN users u ON ur.userid = u.userid WHERE ur.gameid = $1 ORDER BY ur.review_date DESC`;
-    const result = await pool.query(query, [validatedGameId]);
-
-    logger.info('Get game reviews successful', {
-      gameId: validatedGameId,
-      reviewsCount: result.rows.length
-    });
-
-    return res.status(200).json(result.rows);
+    const validatedGameId = validateGameId(gameid);
+    const validatedParams = validatePagination(req.query);
+    const { total, results } = await reviewService.getReviewsForGame(validatedGameId, userId, validatedParams.limit, validatedParams.offset);
+    return res.status(200).json({ total, results });
   } catch (err) {
-    logger.error('Get game reviews failed', {
+    logger.error('Get reviews for game failed', {
       gameId: gameid,
+      userId: userid,
       error: err.message,
       stack: err.stack
     });

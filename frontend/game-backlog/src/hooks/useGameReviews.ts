@@ -28,8 +28,8 @@ export function useGameReviews(gameid: string | undefined) {
 
     try {
       const data = await GameService.getGameReviews(gameid);
-
-      setReviews(data);
+      console.log("Fetched review data in useGameReviews:", data.results);
+      setReviews(data.results);
     } catch (err: any) {
       setError(err.message || "Failed to load reviews.");
     } finally {

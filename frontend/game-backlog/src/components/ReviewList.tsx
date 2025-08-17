@@ -8,6 +8,7 @@ export interface ReviewListProps {
 }
 
 const ReviewList: React.FC<ReviewListProps>= ({ reviews }) => {
+  console.log("Reviews in ReviewList:", reviews);
   return (
     <div className='review-list'>
       {reviews.map((review, id) => (

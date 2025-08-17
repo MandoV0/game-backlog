@@ -31,8 +31,8 @@ export interface ReviewStats {
 }
 
 export interface PaginatedResponse<T> {
-  games: T[];
-  totalPages: number;
+  results: T[];
+  total: number;
 }
 
 export class GameService {
@@ -62,12 +62,12 @@ export class GameService {
     return apiClient.post(`/favorite/${gameId}`);
   }
 
-  static async getGameReviews(gameId: string): Promise<GameReview[]> {
-    return apiClient.get<GameReview[]>(`/review/${gameId}`);
+  static async getGameReviews(gameId: string, limit: number = 20, offset: number = 0): Promise<PaginatedResponse<GameReview>> {
+    return apiClient.get<PaginatedResponse<GameReview>>(`/review/${gameId}?offset=${offset}&limit=${limit}`);
   }
 
   static async getReviewStats(gameId: string): Promise<ReviewStats> {
-    return apiClient.get<ReviewStats>(`/review/stats/${gameId}`);
+    return apiClient.get<ReviewStats>(`/review/rating/${gameId}`);
   }
 
   static async postReview(
