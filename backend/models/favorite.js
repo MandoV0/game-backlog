@@ -44,6 +44,31 @@ class Favorite {
     const totalFavorites = await pool.query(`SELECT COUNT(*) FROM user_game_favorite WHERE userid = $1`, [userId]);
     return { total: parseInt(totalFavorites.rows[0].count, 10), results: result };
   }
+
+  static async getUserFavoriteGames(userId, limit=20, offset=0) {
+    throw Error("Method not implemented");
+    const favoriteGamesQuery = `SELECT * FROM game g INNER JOIN user_game_favorite ug ON ug.gameid = g.gameid AND ug.userid = $1 LIMIT $2 OFFSET $3`
+    const countFavoritesGamesQuery = `SELECT COUNT(*) AS total FROM user_game_favorite WHERE userid = $1`;
+    const countResult = await pool.query(countFavoritesGamesQuery, [userId]);
+    const count = parseInt(countResult.rows[0].total, 10);
+    const favoriteGames = await pool.query(favoriteGamesQuery, [userId, limit, offset]);
+    return { total: count, results: favoriteGames.rows };
+  }
+
+  /**
+   * Create a favorite for a user.
+   * 
+   * @param {*} userId 
+   * @param {*} gameId 
+   * @returns 
+   */
+  static async createFavorite(userId, gameId) {
+    const query = `INSERT INTO user_game_favorite (userid, gameid) VALUES ($1, $2) ON CONFLICT (userid, gameid) DO NOTHING RETURNING *`;
+    const values = [userId, gameId];
+    const result = await pool.query(query, values);
+    
+    return result.rows[0];
+  }
 }
 
 module.exports = Favorite;

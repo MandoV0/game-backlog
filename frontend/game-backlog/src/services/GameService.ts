@@ -54,20 +54,28 @@ export class GameService {
     limit: number = 20
   ): Promise<PaginatedResponse<Game>> {
     return apiClient.get<PaginatedResponse<Game>>(
-      `/favorite?offset=${offset}&limit=${limit}`
+      `/users/favorites?offset=${offset}&limit=${limit}`
     );
   }
 
   static async toggleFavorite(gameId: number): Promise<void> {
-    return apiClient.post(`/favorite/${gameId}`);
+    return apiClient.post(`/users/favorites/${gameId}`);
+  }
+
+  static async createFavorite(gameId: string): Promise<void> {
+    return apiClient.post(`/users/favorites`, { gameid: gameId });
+  }
+
+  static async deleteFavorite(gameId: string): Promise<void> {
+    return apiClient.delete(`/users/favorites/${gameId}`);
   }
 
   static async getGameReviews(gameId: string, limit: number = 20, offset: number = 0): Promise<PaginatedResponse<GameReview>> {
-    return apiClient.get<PaginatedResponse<GameReview>>(`/review/${gameId}?offset=${offset}&limit=${limit}`);
+    return apiClient.get<PaginatedResponse<GameReview>>(`/reviews/${gameId}?offset=${offset}&limit=${limit}`);
   }
 
   static async getReviewStats(gameId: string): Promise<ReviewStats> {
-    return apiClient.get<ReviewStats>(`/review/rating/${gameId}`);
+    return apiClient.get<ReviewStats>(`/reviews/rating/${gameId}`);
   }
 
   static async postReview(
@@ -75,7 +83,7 @@ export class GameService {
     rating: number,
     reviewText: string
   ): Promise<void> {
-    return apiClient.post(`/review`, {
+    return apiClient.post(`/reviews`, {
       gameid: gameId,
       rating,
       review_text: reviewText,

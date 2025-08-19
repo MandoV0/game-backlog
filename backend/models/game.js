@@ -62,6 +62,27 @@ class Game {
     return parseInt(result.rows[0].count, 10);
   }
 
+  /**
+   * Get games with pagination
+   * @param {*} limit 
+   * @param {*} offset 
+   * @param {*} userId - Optional, attaches weather this is the favorite game of the user
+   * @returns 
+   */
+  static async getGamesWithPagination(limit = 20, offset = 0, userId = null) {
+    const query = this._baseQuery({
+      limit: `LIMIT $1`,
+      offset: `OFFSET $2`,
+    });
+    const result = await pool.query(query, [limit, offset]);
+    return result.rows;
+  }
+
+  static 
 }
+
+/* To only get favorites
+ 
+*/
 
 module.exports = Game;

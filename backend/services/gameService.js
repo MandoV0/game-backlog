@@ -18,15 +18,6 @@ class GameService {
       const totalCount = await gameModel.getTotalCount();
       console.log("Game Result:", gameResult);
       
-      /*
-      if (userId) {
-        const favoriteIds = await this.getUserFavoriteIds(userId);
-        games = games.map((game) => ({
-          ...game,
-          is_favorite: favoriteIds.includes(game.gameid),
-        }));
-      }
-      */
 
       return { total: totalCount, results: gameResult };
     } catch (err) {
@@ -145,13 +136,12 @@ class GameService {
 
     try {
       const favorites = await favoritesModel.getUserFavorites(userId, limit, offset);
-      console.log("Favorites:", favorites);
       logger.info("GameService.getUserFavorites successful", {
         userId,
         favoritesCount: favorites.total,
       });
 
-      return { total: favorites.total, results: favorites.results };
+      return favorites;
     } catch (err) {
       logger.error("GameService.getUserFavorites error", {
         limit,
@@ -164,51 +154,16 @@ class GameService {
     }
   }
 
-  async setFavorite(userId, gameId) {
-    logger.info("GameService.setFavorite called", { userId, gameId });
-
+  async createFavorite(userId, gameId) {
     try {
-      const gameExists = await pool.query(
-        `SELECT * FROM game WHERE gameid = $1`,
-        [gameId]
-      );
-
-      if (gameExists.rowCount === 0) {
-        logger.warn("GameService.setFavorite game not found", { gameId });
-        throw new Error("Game not found");
-      }
-
-      const isFavorite = await pool.query(
-        `SELECT * FROM user_game_favorite WHERE gameid = $1 AND userid = $2`,
-        [gameId, userId]
-      );
-
-      if (isFavorite.rowCount > 0) {
-        const deleteFavorite = await pool.query(
-          `DELETE FROM user_game_favorite WHERE gameid = $1 AND userid = $2`,
-          [gameId, userId]
-        );
-
-        logger.info("GameService.setFavorite unfavorited", { userId, gameId });
-        return { message: "Game unfavorited" };
-      }
-
-      const query = `
-        INSERT INTO user_game_favorite (userid, gameid)
-        VALUES ($1, $2)
-        ON CONFLICT (userid, gameid) DO NOTHING
-      `;
-      await pool.query(query, [userId, gameId]);
-
-      logger.info("GameService.setFavorite favorited", { userId, gameId });
-      return { message: "Game favorited successfully" };
+      const result = await favoritesModel.createFavorite(userId, gameId);
+      return result;
     } catch (err) {
-      logger.error("GameService.setFavorite error", {
-        userId,
-        gameId,
-        error: err.message,
-        stack: err.stack,
-      });
+      if (err.code === '23503') { /* This is the foreign key violation error of Postgres, meaning this game or user id does not exist */
+        const error = new Error('User or game does not exist')
+        error.type = 'INVALID_INPUT';
+        throw error;
+      }
       throw err;
     }
   }

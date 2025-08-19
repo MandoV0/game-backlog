@@ -24,16 +24,7 @@ class Review {
    return result.rows[0];
   }
 
-  /*
-  static async updateReview(userId, reviewId, data) {
-    console.log(`Updating review for userId: ${userId}, reviewId: ${reviewId} with review data: ${JSON.stringify(data)}`);
-    const query = `UPDATE user_review SET rating = $1, review_text = $2 WHERE reviewid = $3 AND userid = $4 RETURNING *`;
-    const values = [data.rating, data.review_text, reviewId, userId];
-    const result = await pool.query(query, values);
-    return result.rows[0];
-  }
-  */
-  
+
   /**
    * Creates/Updates a game review.
    * @param {string} userId - The ID of the user.

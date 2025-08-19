@@ -5,7 +5,7 @@ import { GameContainer } from "../components/GameContainer";
 import { usePaginatedGames } from "../hooks/usePaginatedGames";
 
 export type Game = {
-  gameid: number;
+  gameid: string;
   title: string;
   description: string;
   genres: string[];
