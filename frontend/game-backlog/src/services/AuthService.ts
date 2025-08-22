@@ -7,7 +7,7 @@ export interface LoginInformation {
 }
 
 export interface AuthResponse {
-  jwtToken: string;
+  token: string;
   refreshToken?: string;
   user?: {
     id: number;
@@ -20,7 +20,7 @@ export class AuthService {
   static async login(credentials: LoginInformation): Promise<AuthResponse> {
     const data = await apiClient.post<AuthResponse>("/auth/login", credentials);
 
-    localStorage.setItem("accessToken", data.jwtToken);
+    localStorage.setItem("accessToken", data.token);
 
     return data;
   }

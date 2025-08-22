@@ -8,8 +8,8 @@ export type Game = {
   gameid: string;
   title: string;
   description: string;
-  genres: string[];
-  images: string[];
+  genres?: { genreid: number; name: string }[];
+  images: { imageid: number; url: string }[];
   isFavorite?: boolean;
 };
 

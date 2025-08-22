@@ -7,7 +7,7 @@ export interface GameCardProps {
   gameid: string;
   title: string;
   description: string;
-  genres: string[];
+  genres?: { genreid: number; name: string }[];
   imageUrl?: string;
   isFavorite?: boolean;
 }
@@ -24,14 +24,13 @@ export const GameCard: React.FC<GameCardProps> = ({
   const [favLoading, setFavLoading] = useState(false);
 
   const handleFavoriteClick = async () => {
-    if (favLoading) return; // prevent double clicks
+    if (favLoading) return;
     setFavLoading(true);
 
     try {
       await GameService.createFavorite(gameid);
-      setFavorite(true); // update UI only on success
+      setFavorite(true);
     } catch (error: any) {
-      // You can check for specific error codes/messages from your API
       if (error?.response?.status === 400) {
         console.warn("Game is already a favorite");
       } else {
@@ -63,8 +62,8 @@ export const GameCard: React.FC<GameCardProps> = ({
       <p>{description}</p>
 
       <div>
-        {genres.map((genre, index) => (
-          <span className='genre-text' key={index}>{genre}</span>
+        {genres?.map((genre) => (
+          <span className='genre-text' key={genre.genreid}>{genre.name}</span>
         ))}
       </div>
     </div>

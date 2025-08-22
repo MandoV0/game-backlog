@@ -1,5 +1,5 @@
 import { ApiError } from "../utils/error";
-import { addFavorite, removeFavorite } from "../repositories/favorite.repository";
+import { addFavorite, removeFavorite, getFavoritesByUserId } from "../repositories/favorite.repository";
 
 export async function favoriteGame(userId: number, gameId: number): Promise<{ message: string }> {
   const added = await addFavorite(userId, gameId);
@@ -14,5 +14,6 @@ export async function unfavoriteGame(userId: number, gameId: number): Promise<{ 
 }
 
 export async function getFavoriteGames(userId: number): Promise<{ games: number[] }> {
-  throw new ApiError(501, "Not implemented yet");
+  const userFavoriteGameIDs = await getFavoritesByUserId(userId);
+  return { games: userFavoriteGameIDs };
 }

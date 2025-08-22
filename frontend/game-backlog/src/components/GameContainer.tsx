@@ -16,7 +16,7 @@ export const GameContainer: React.FC<GamesProps> = ({ games }) => {
           title={game.title}
           description={game.description}
           genres={game.genres}
-          imageUrl={game.images[0]}
+          imageUrl={game.images[0]?.url}
           isFavorite={game.isFavorite}
           key={index}
         />

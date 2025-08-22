@@ -21,3 +21,13 @@ export async function removeFavorite(userId: number, gameId: number): Promise<bo
   const result = await pool.query(`DELETE FROM user_game_favorite WHERE userid = $1 AND gameid = $2`, [userId, gameId]);
   return (result.rowCount ?? 0) > 0;
 }
+
+/**
+ * Retrieves a user's favorite games from the database.
+ * @param userId - The unique identifier of the user.
+ * @returns A list of game IDs that the user has favorited.
+ */
+export async function getFavoritesByUserId(userId: number): Promise<number[]> {
+  const result = await pool.query(`SELECT gameid FROM user_game_favorite WHERE userid = $1`, [userId]);
+  return result.rows.map(row => row.gameid);
+}

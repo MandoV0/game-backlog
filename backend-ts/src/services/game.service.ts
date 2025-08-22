@@ -1,4 +1,4 @@
-import { getGames, countGames } from "../repositories/game.repository";
+import * as gameRepo from "../repositories/game.repository";
 import { ApiError } from "../utils/error";
 import { GameResponse } from "../models/game.dto";
 
@@ -19,8 +19,8 @@ export interface PaginatedGames {
 export async function getPaginatedGames(page: number = 1, pageSize: number = 10): Promise<PaginatedGames> {
   const offset = (page - 1) * pageSize;
   const [games, total] = await Promise.all([
-    getGames(pageSize, offset),
-    countGames(),
+    gameRepo.getGames(pageSize, offset),
+    gameRepo.countGames(),
   ]);
 
   if (!games || games.length === 0) throw new ApiError(404, "Games not found");
@@ -32,4 +32,12 @@ export async function getPaginatedGames(page: number = 1, pageSize: number = 10)
     pageSize,
     totalPages: Math.ceil(total / pageSize),
   };
+}
+
+export async function getGamesByIds(gameIds: number[]): Promise<GameResponse[]> {
+  const games = await gameRepo.getGamesByIds(gameIds);
+
+  if (!games || games.length === 0) throw new ApiError(404, "Games not found");
+
+  return games;
 }
