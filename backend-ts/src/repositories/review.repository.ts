@@ -14,13 +14,9 @@ export async function createReview(gameId: number, userId: number, rating: numbe
   }
 }
 
-export async function deleteReview(gameId: number, userId: number): Promise<Review> {
+export async function deleteReview(gameId: number, userId: number): Promise<void> {
   try {
-    const result = await pool.query(`DELETE FROM user_review WHERE gameid = $1 AND userid = $2 RETURNING *`, [gameId, userId]);
-    if (result.rowCount === 0) {
-      throw new ApiError(404, "Review does not exist");
-    }
-    return result.rows[0];
+    await pool.query(`DELETE FROM user_review WHERE gameid = $1 AND userid = $2`, [gameId, userId]);
   } catch (error: any) {
     throw new ApiError(500, "Database error while deleting review: " + error.message);
   }

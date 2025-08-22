@@ -8,10 +8,8 @@ export async function createReview(gameId: number, userId: number, rating: numbe
   return result;
 }
 
-export async function deleteReview(gameId: number, userId: number): Promise<Review> {
-  const result = await reviewRepo.deleteReview(gameId, userId);
-  if (!result) throw new ApiError(500, "Failed to delete review");
-  return result;
+export async function deleteReview(gameId: number, userId: number): Promise<void> {
+  await reviewRepo.deleteReview(gameId, userId);
 }
 
 export async function getReviews(gameId: number, limit: number = 10, offset: number = 0): Promise<Review[]> {

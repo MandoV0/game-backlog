@@ -13,6 +13,7 @@ router.get("/:gameId/reviews", getReviewsController);
 router.get("/:gameId/reviews/summary", getRatingSummaryController);
 
 /* Authorized Routes */
+// REVIEWS
 router.post("/:gameId/reviews", authMiddleware, createReviewController);
 router.delete("/:gameId/reviews/:reviewId", authMiddleware, deleteReviewController);
 

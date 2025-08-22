@@ -1,6 +1,21 @@
 import { Request, Response, NextFunction } from "express";
-import * as favoriteService from "../services/favorite.service";
+import * as userService from "../services/user.service";
 import { ApiError } from "../utils/error";
+
+export async function getUserFavoriteGamesController(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userId = Number(req.params.userId);
+    if (!userId) return next(new ApiError(400, "Missing user ID"));
+
+    const limit = Number(req.query.limit) || 10;
+    const offset = Number(req.query.offset) || 0;
+
+    const favorites = await userService.getUserFavoriteGames(userId, limit, offset);
+    res.json(favorites);
+  } catch (error) {
+    next(error);
+  }
+}
 
 export async function favoriteGameController(req: Request, res: Response, next: NextFunction) {
   try {
@@ -10,8 +25,8 @@ export async function favoriteGameController(req: Request, res: Response, next: 
     if (!userId) return next(new ApiError(401, "Unauthorized"));
     if (isNaN(gameId) || gameId < 1) return next(new ApiError(400, "Invalid game ID"));
   
-    const result = await favoriteService.favoriteGame(userId, gameId);
-    res.json(result);
+    const result = await userService.favoriteGame(userId, gameId);
+    res.status(result.added ? 201 : 200).json({ message: result.message });
   } catch (error) {
     next(error);
   }
@@ -25,27 +40,10 @@ export async function unfavoriteGameController(req: Request, res: Response, next
     if (!userId) return next(new ApiError(401, "Unauthorized"));
     if (isNaN(gameId) || gameId < 1) return next(new ApiError(400, "Invalid game ID"));
   
-    const result = await favoriteService.unfavoriteGame(userId, gameId);
+    const result = await userService.unfavoriteGame(userId, gameId);
     res.json(result);
   } catch (error) {
     next(error);
   }
 }
 
-/**
- * Get all favorite games for the authenticated user
- * @param req 
- * @param res 
- * @param next 
- */
-export async function getFavoritesController(req: Request, res: Response, next: NextFunction) {
-  try {
-    const userId = req.user?.id;
-    if (!userId) return next(new ApiError(401, "Unauthorized"));
-
-    const favorites = await favoriteService.getFavoriteGames(userId);
-    res.json(favorites);
-  } catch (error) {
-    next(error);
-  }
-}

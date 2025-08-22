@@ -5,7 +5,7 @@ export async function createReviewController(req: Request, res: Response, next: 
   try {
     const { gameId, rating, review_text } = req.body;
     const userId = req.user?.id;
-
+    
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
 
     const newReview = await reviewService.createReview(gameId, userId, rating, review_text);
@@ -23,8 +23,8 @@ export async function deleteReviewController(req: Request, res: Response, next: 
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
     if (!gameId) return res.status(400).json({ message: "Invalid game ID" });
 
-    const deletedReview = await reviewService.deleteReview(gameId, userId);
-    res.status(204).json();
+    await reviewService.deleteReview(gameId, userId);
+    res.sendStatus(204);
   } catch (error) {
     next(error);
   }
