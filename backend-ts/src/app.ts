@@ -2,6 +2,7 @@ import express from "express";
 import gameRoutes from "./routes/game.routes";
 import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
+import statusRoutes from "./routes/status.routes";
 import { errorHandler } from "./middlewares/error.middleware";
 import cors from "cors";
 
@@ -22,6 +23,8 @@ app.use("/games", gameRoutes);
 app.use("/auth", authRoutes);
 
 app.use("/users", userRoutes);
+
+app.use("/statuses", statusRoutes);
 
 app.use(errorHandler);
 

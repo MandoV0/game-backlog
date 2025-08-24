@@ -47,3 +47,19 @@ export async function unfavoriteGameController(req: Request, res: Response, next
   }
 }
 
+/** */
+export async function updateUserGameStatusController(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userId = req.user?.id
+    const { statusId, gameId } = req.body;
+
+    if (!userId) return next(new ApiError(401, "Unauthorized"));
+    if (isNaN(gameId) || gameId < 1) return next(new ApiError(400, "Invalid game ID"));
+    if (isNaN(statusId) || statusId < 1) return next(new ApiError(400, "Invalid status ID"));
+
+    const result = await userService.updateUserGameStatus(userId, gameId, statusId);
+    res.status(200);
+  } catch (error) {
+    next(error);
+  }
+}

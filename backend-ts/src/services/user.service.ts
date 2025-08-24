@@ -1,5 +1,6 @@
 import { GameResponse } from "../models/game.dto";
 import * as favoriteRepo from "../repositories/favorite.repository";
+import * as userRepo from "../repositories/user.repository";
 import { ApiError } from "../utils/error";
 
 export async function getUserFavoriteGames(userId: number, limit: number = 10, offset: number = 0): Promise<{ games: GameResponse[] }> {
@@ -21,4 +22,10 @@ export async function unfavoriteGame(userId: number, gameId: number): Promise<{ 
   const removed = await favoriteRepo.removeFavorite(userId, gameId);
   if (!removed) throw new ApiError(400, "Game is not favorited");
   return { message: "Game unfavorited" }
+}
+
+export async function updateUserGameStatus(userId: number, gameId: number, statusId: number): Promise<{ message: string }> {
+  const updated = await userRepo.updateUserGameStatus(userId, gameId, statusId);
+  //if (!updated) throw new ApiError(400, "Failed to update game status");
+  return { message: "Game status updated" };
 }
