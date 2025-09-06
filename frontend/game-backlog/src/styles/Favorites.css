@@ -1,9 +1,0 @@
-.div-main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: var(--gap-large);
-  background-color: var(--color-bg);
-  min-height: 100vh;
-  font-family: var(--font-base);
-}
