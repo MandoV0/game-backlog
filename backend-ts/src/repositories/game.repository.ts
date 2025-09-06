@@ -1,82 +1,80 @@
 import { pool } from "../config/database";
-import { GameImage, GameResponse } from "../models/game.dto";
-import { Game } from "../models/game.model";
+import { Game, GameImage, Genre, Platform } from "../models/game.model";
 
-/**
- * Fetches a list of games from the database.
- * @param limit The maximum number of games to return.
- * @param offset The number of games to skip before starting to collect the result set.
- * @returns A promise that resolves to an array of games.
- */
-export async function getGames(
-  limit: number = 10,
-  offset: number = 0
-): Promise<Game[]> {
-  const result = await pool.query(
-  `SELECT 
-    g.gameid,
-    g.title,
-    g.description,
-    g.releasedate,
-    gi.imageid,
-    gi.url,
-    json_agg(DISTINCT jsonb_build_object('genreid', ge.genreid, 'name', ge.name)) 
-      FILTER (WHERE ge.genreid IS NOT NULL) AS genres
-  FROM game g
-  LEFT JOIN game_image gi ON gi.gameid = g.gameid
-  LEFT JOIN game_genre gg ON gg.gameid = g.gameid
-  LEFT JOIN genre ge ON ge.genreid = gg.genreid
-  GROUP BY g.gameid, g.title, g.description, g.releasedate, gi.imageid, gi.url
-  ORDER BY g.releasedate DESC
-  LIMIT $1 OFFSET $2
-  `,
+export interface GameWithRelations extends Game {
+  platforms: Platform[];
+  genres: Genre[];
+  images: GameImage[];
+}
+
+export const getAllGames = async (
+  limit: number,
+  offset: number
+): Promise<{ games: GameWithRelations[]; count: number }> => {
+  const countResult = await pool.query("SELECT COUNT(*) FROM games");
+  const count = parseInt(countResult.rows[0].count, 10);
+
+  const result = await pool.query<GameWithRelations>(`
+    SELECT 
+      g.*,
+      COALESCE(json_agg(DISTINCT jsonb_build_object('id', p.id, 'name', p.name)) 
+               FILTER (WHERE p.id IS NOT NULL), '[]') AS platforms,
+      COALESCE(json_agg(DISTINCT jsonb_build_object('id', ge.id, 'name', ge.name)) 
+               FILTER (WHERE ge.id IS NOT NULL), '[]') AS genres,
+      COALESCE(json_agg(DISTINCT jsonb_build_object('id', gi.id, 'game_id', gi.game_id, 'url', gi.url, 'type', gi.type, 'description', gi.description)) 
+               FILTER (WHERE gi.id IS NOT NULL), '[]') AS images
+    FROM games g
+    LEFT JOIN game_platforms gp ON gp.game_id = g.id
+    LEFT JOIN platforms p ON p.id = gp.platform_id
+    LEFT JOIN game_genres gg ON gg.game_id = g.id
+    LEFT JOIN genres ge ON ge.id = gg.genre_id
+    LEFT JOIN game_images gi ON gi.game_id = g.id
+    GROUP BY g.id
+    ORDER BY g.id
+    LIMIT $1 OFFSET $2`,
     [limit, offset]
   );
+  const games = result.rows.map(row => ({
+    ...row,
+    platforms: row.platforms as Platform[],
+    genres: row.genres as Genre[],
+    images: row.images as GameImage[],
+  }));
 
-  const gamesMap = new Map<number, GameResponse>();
+  return { games, count };
+};
 
-  for (const row of result.rows) {
-    const existingGame = gamesMap.get(row.gameid);
-    const image: GameImage | null = row.imageid
-      ? { imageid: row.imageid, url: row.url }
-      : null;
+export const getGameById = async (id: number): Promise<GameWithRelations> => {
+  const result = await pool.query<GameWithRelations>(`
+    SELECT 
+      g.*,
+      COALESCE(json_agg(DISTINCT jsonb_build_object('id', p.id, 'name', p.name)) 
+               FILTER (WHERE p.id IS NOT NULL), '[]') AS platforms,
+      COALESCE(json_agg(DISTINCT jsonb_build_object('id', ge.id, 'name', ge.name)) 
+               FILTER (WHERE ge.id IS NOT NULL), '[]') AS genres,
+      COALESCE(json_agg(DISTINCT jsonb_build_object('id', gi.id, 'game_id', gi.game_id, 'url', gi.url, 'type', gi.type, 'description', gi.description)) 
+               FILTER (WHERE gi.id IS NOT NULL), '[]') AS images
+    FROM games g
+    LEFT JOIN game_platforms gp ON gp.game_id = g.id
+    LEFT JOIN platforms p ON p.id = gp.platform_id
+    LEFT JOIN game_genres gg ON gg.game_id = g.id
+    LEFT JOIN genres ge ON ge.id = gg.genre_id
+    LEFT JOIN game_images gi ON gi.game_id = g.id
+    WHERE g.id = $1
+    GROUP BY g.id`,
+    [id]
+  );
 
-    if (existingGame) {
-      if (image) existingGame.images?.push(image);
-    } else {
-      gamesMap.set(row.gameid, {
-        gameid: row.gameid,
-        title: row.title,
-        description: row.description,
-        releaseDate: row.releasedate,
-        images: image ? [image] : [],
-        genres: row.genres ?? [],
-      });
-    }
+  if (result.rows.length === 0) {
+    throw new Error(`Game with id ${id} not found`);
   }
 
-  return Array.from(gamesMap.values());
-}
+  const row = result.rows[0];
 
-/**
- * Retrieves a list of games from the database by their IDs.
- * @param limit - The maximum number of games to return.
- * @param offset - The number of games to skip before starting to collect the result set.
- * @param gameIds - An array of game IDs to retrieve.
- * @returns A promise that resolves to an array of games.
- */
-export async function getGamesByIds(gameIds: number[]): Promise<Game[]> {
-  const result = await pool.query(`SELECT * FROM game WHERE gameid = ANY($1)`, [
-    gameIds,
-  ]);
-  return result.rows;
-}
-
-/**
- * Counts the total number of games in the database.
- * @returns The total number of games.
- */
-export async function countGames(): Promise<number> {
-  const result = await pool.query("SELECT COUNT(*) FROM game");
-  return parseInt(result.rows[0].count, 10);
-}
+  return {
+    ...row,
+    platforms: row.platforms as Platform[],
+    genres: row.genres as Genre[],
+    images: row.images as GameImage[],
+  };
+};
