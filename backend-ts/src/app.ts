@@ -1,6 +1,5 @@
 import express from "express";
 import gameRoutes from "./routes/game.routes";
-import userRoutes from "./routes/user.routes";
 import cors from "cors";
 import { errorHandler } from "./middlewares/error.middleware";
 
@@ -19,7 +18,6 @@ app.use(express.json());
 
 // Routes
 app.use("/api/v1/games", gameRoutes);
-app.use("/api/v1/users", userRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

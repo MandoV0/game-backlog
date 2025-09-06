@@ -32,7 +32,7 @@ CREATE TABLE game_images (
     game_id INT NOT NULL REFERENCES games(id) ON DELETE CASCADE,
     url VARCHAR(255) NOT NULL,
     type VARCHAR(50) DEFAULT 'screenshot', -- 'cover', 'screenshot'
-    description TEXT,
+    description TEXT
 );
 
 CREATE TABLE game_platforms (
