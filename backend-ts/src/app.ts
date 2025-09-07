@@ -1,23 +1,25 @@
 import express from "express";
 import gameRoutes from "./routes/game.routes";
+import userRoutes from "./routes/user.routes";
 import cors from "cors";
 import { errorHandler } from "./middlewares/error.middleware";
 
 const app = express();
 
 app.use(cors({
-  origin: ['http://localhost:3001', 'http://127.0.0.1:3001'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
-  credentials: true,
-  preflightContinue: false,
-  optionsSuccessStatus: 200
+    origin: ['http://localhost:3001', 'http://127.0.0.1:3001'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+    credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 200
 }));
 
 app.use(express.json());
 
 // Routes
 app.use("/api/v1/games", gameRoutes);
+app.use("/api/v1/users", userRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
