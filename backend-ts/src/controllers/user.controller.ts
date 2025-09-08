@@ -85,3 +85,15 @@ export const deleteUserReview = async (req: Request, res: Response, next: NextFu
         next(err);
     }
 };
+
+export const getUserReviews = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.user?.id;
+        if (!userId) throw { status: 401, message: 'Unauthorized' };
+
+        const reviews = await userService.getUserReviews(userId);
+        res.json({ status: 'success', data: reviews });
+    } catch (err) {
+        next(err);
+    }
+};

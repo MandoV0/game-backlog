@@ -24,3 +24,12 @@ export interface RatingStatistics {
     one_star_reviews: number;
     zero_star_reviews: number;
 }
+
+export interface UserGameReviews {
+    game_id: number;
+    user_id: number;
+    title: string;
+    content: string;
+    rating: number;
+    game_title: string;
+}

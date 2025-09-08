@@ -1,6 +1,7 @@
 import { pool } from '../config/database';
 import bcrypt from 'bcrypt';
 import { User } from '../models/user.model';
+import { UserGameReviews } from '../models/review.model';
 
 const SALT_ROUNDS = 10;
 
@@ -53,4 +54,14 @@ export const createUserReview = async (userId: number, gameId: number, rating: n
 
 export const deleteUserReview = async (userId: number, gameId: number): Promise<void> => {
     await pool.query('DELETE FROM reviews WHERE user_id = $1 AND game_id = $2', [userId, gameId]);
+}
+
+export const getUserReviews = async (userId: number): Promise<UserGameReviews[]> => {
+    const result = await pool.query<UserGameReviews>(
+        `SELECT r.game_id, r.user_id,  r.title, r.content, r.rating, g.title as "game_title"
+        FROM reviews r JOIN games g ON r.game_id = g.id
+        WHERE r.user_id = $1`,
+        [userId]
+    );
+    return result.rows;
 }

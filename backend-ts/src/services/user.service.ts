@@ -93,3 +93,7 @@ export const deleteUserReview = async (userId: number, gameId: number) => {
     if (!gameId) throw { status: 400, message: 'Game ID is required' };
     return await userRepo.deleteUserReview(userId, gameId);
 }
+
+export const getUserReviews = async (userId: number) => {
+    return await userRepo.getUserReviews(userId);
+}
