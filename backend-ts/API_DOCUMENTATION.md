@@ -6,62 +6,56 @@ http://localhost:3000/api/v1
 ```
 
 ## Authentication
-Most endpoints require authentication via JWT token in the Authorization header:
+Most user routes require a JWT in the Authorization header:
 ```
 Authorization: Bearer <your-jwt-token>
 ```
 
 ---
 
-## 🎮 Games Endpoints
+## Games Endpoints
 
 ### Get All Games
 ```http
 GET /games?limit=10&offset=0
 ```
 
-**Query Parameters:**
-- `limit` (optional): Number of games per page (default: 10)
-- `offset` (optional): Number of games to skip (default: 0)
+- **limit** (optional): number per page (default 10)
+- **offset** (optional): number to skip (default 0)
 
-**Response:**
+Response:
 ```json
 {
   "count": 4,
   "results": [
     {
       "id": 1,
-      "title": "Elden Ring",
+      "title": "Example",
       "release_year": 2022,
       "created_at": "2024-01-01T00:00:00.000Z",
-      "updated_at": "2024-01-01T00:00:00.000Z",
-      "platforms": [{"id": 1, "name": "PC"}, {"id": 2, "name": "PS5"}],
-      "genres": [{"id": 1, "name": "RPG"}, {"id": 2, "name": "Action"}],
-      "images": [{"id": 1, "url": "https://example.com/eldenring_cover.jpg", "type": "cover"}]
+      "updated_at": "2024-01-01T00:00:00.000Z"
     }
   ]
 }
 ```
 
-### Search Games
-```http
-GET /games/search?q=zelda&genres=1,2&platforms=1,2&yearFrom=2020&yearTo=2023&sortBy=title&sortOrder=asc&limit=10&offset=0
-```
-
-**Query Parameters:**
-- `q` (optional): Search query for game title
-- `genres` (optional): Comma-separated genre IDs
-- `platforms` (optional): Comma-separated platform IDs
-- `yearFrom` (optional): Minimum release year
-- `yearTo` (optional): Maximum release year
-- `sortBy` (optional): Sort field (title, release_year, created_at)
-- `sortOrder` (optional): Sort order (asc, desc)
-- `limit` (optional): Number of games per page
-- `offset` (optional): Number of games to skip
-
 ### Get Game by ID
 ```http
 GET /games/:id
+```
+
+Returns a game with related data (e.g., platforms, genres, images) if available.
+
+### Get Genres
+```http
+GET /games/genres
+```
+
+Response:
+```json
+[
+  { "id": 1, "name": "RPG" }
+]
 ```
 
 ### Get Platforms
@@ -69,47 +63,92 @@ GET /games/:id
 GET /games/platforms
 ```
 
-**Response:**
+Response:
+```json
+[
+  { "id": 1, "name": "PC" }
+]
+```
+
+### Get Reviews for a Game
+```http
+GET /games/:id/reviews?limit=10&offset=0
+```
+
+Response:
 ```json
 {
   "status": "success",
   "data": [
-    {"id": 1, "name": "PC"},
-    {"id": 2, "name": "PS5"},
-    {"id": 3, "name": "Xbox Series X"},
-    {"id": 4, "name": "Switch"}
+    {
+      "id": 1,
+      "game_id": 1,
+      "user_id": 10,
+      "rating": 9,
+      "title": "Great",
+      "content": "...",
+      "created_at": "2024-01-01T00:00:00.000Z",
+      "updated_at": "2024-01-01T00:00:00.000Z"
+    }
   ]
 }
 ```
 
-### Get Genres
+### Get Rating Statistics for a Game
 ```http
-GET /games/genres
+GET /games/:id/review-statistics
 ```
 
-**Response:**
+Response:
 ```json
 {
   "status": "success",
-  "data": [
-    {"id": 1, "name": "RPG"},
-    {"id": 2, "name": "Action"},
-    {"id": 3, "name": "Adventure"},
-    {"id": 4, "name": "Strategy"}
-  ]
+  "data": {
+    "total_reviews": 3,
+    "average_rating": 8.7,
+    "ten_star_reviews": 1,
+    "nine_star_reviews": 1,
+    "eight_star_reviews": 1,
+    "seven_star_reviews": 0,
+    "six_star_reviews": 0,
+    "five_star_reviews": 0,
+    "four_star_reviews": 0,
+    "three_star_reviews": 0,
+    "two_star_reviews": 0,
+    "one_star_reviews": 0,
+    "zero_star_reviews": 0
+  }
+}
+```
+
+### Get Backlog Status Statistics for a Game
+```http
+GET /games/:id/status-statistics
+```
+
+Response:
+```json
+{
+  "status": "success",
+  "data": {
+    "playing": 2,
+    "completed": 5,
+    "backlog": 3,
+    "dropped": 1
+  }
 }
 ```
 
 ---
 
-## 👤 User Endpoints
+## User Endpoints
 
-### Register User
+### Register
 ```http
 POST /users/register
 ```
 
-**Request Body:**
+Request body:
 ```json
 {
   "username": "gamer123",
@@ -118,7 +157,7 @@ POST /users/register
 }
 ```
 
-**Response:**
+Response:
 ```json
 {
   "status": "success",
@@ -129,17 +168,17 @@ POST /users/register
       "email": "gamer@example.com",
       "created_at": "2024-01-01T00:00:00.000Z"
     },
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    "token": "<jwt>"
   }
 }
 ```
 
-### Login User
+### Login
 ```http
 POST /users/login
 ```
 
-**Request Body:**
+Request body:
 ```json
 {
   "email": "gamer@example.com",
@@ -147,7 +186,7 @@ POST /users/login
 }
 ```
 
-**Response:**
+Response:
 ```json
 {
   "status": "success",
@@ -158,216 +197,182 @@ POST /users/login
       "email": "gamer@example.com",
       "created_at": "2024-01-01T00:00:00.000Z"
     },
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-  }
-}
-```
-
-### Get User Profile
-```http
-GET /users/profile
-Authorization: Bearer <token>
-```
-
-**Response:**
-```json
-{
-  "status": "success",
-  "data": {
-    "id": 1,
-    "username": "gamer123",
-    "email": "gamer@example.com",
-    "password_hash": "hashed_password",
-    "created_at": "2024-01-01T00:00:00.000Z",
-    "updated_at": "2024-01-01T00:00:00.000Z",
-    "total_games": 5,
-    "completed_games": 2,
-    "playing_games": 1,
-    "backlog_games": 2,
-    "dropped_games": 0,
-    "total_rating": 17,
-    "average_rating": 3.4
+    "token": "<jwt>"
   }
 }
 ```
 
 ---
 
-## 📚 Backlog Management
+## Backlog (authenticated)
+
+Authorization header is required for all endpoints below.
 
 ### Get User Backlog
 ```http
-GET /users/backlog?status=playing&limit=10&offset=0
-Authorization: Bearer <token>
+GET /users/backlog
 ```
 
-**Query Parameters:**
-- `status` (optional): Filter by status (backlog, playing, completed, dropped)
-- `limit` (optional): Number of games per page
-- `offset` (optional): Number of games to skip
-
-**Response:**
+Response:
 ```json
 {
   "status": "success",
-  "data": {
-    "count": 3,
-    "results": [
-      {
-        "id": 1,
-        "user_id": 1,
-        "game_id": 1,
-        "status": "playing",
-        "rating": null,
-        "started_at": "2024-01-01",
-        "finished_at": null,
-        "created_at": "2024-01-01T00:00:00.000Z",
-        "updated_at": "2024-01-01T00:00:00.000Z",
-        "game": {
-          "id": 1,
-          "title": "Elden Ring",
-          "release_year": 2022,
-          "platforms": [{"id": 1, "name": "PC"}],
-          "genres": [{"id": 1, "name": "RPG"}],
-          "images": []
-        }
-      }
-    ]
-  }
+  "data": [
+    {
+      "game_id": 1,
+      "user_id": 1,
+      "status": "playing",
+      "rating": 9,
+      "started_at": "2024-01-01",
+      "finished_at": null,
+      "title": "Elden Ring"
+    }
+  ]
 }
 ```
 
 ### Add Game to Backlog
 ```http
 POST /users/backlog
-Authorization: Bearer <token>
 ```
 
-**Request Body:**
+Request body:
 ```json
 {
-  "gameId": 1,
-  "status": "backlog"
+  "gameId": 1
 }
 ```
 
-### Update Game Status
-```http
-PUT /users/backlog/:gameId
-Authorization: Bearer <token>
-```
-
-**Request Body:**
+Response (201):
 ```json
 {
-  "status": "completed",
-  "rating": 9,
-  "startedAt": "2024-01-01",
-  "finishedAt": "2024-01-15"
+  "status": "success",
+  "data": {
+    "game_id": 1,
+    "user_id": 1,
+    "status": "backlog"
+  }
+}
+```
+
+### Update Game Backlog Status
+```http
+PUT /users/backlog
+```
+
+Request body:
+```json
+{
+  "gameId": 1,
+  "status": "completed"
+}
+```
+
+Response:
+```json
+{
+  "status": "success",
+  "data": {
+    "game_id": 1,
+    "user_id": 1,
+    "status": "completed"
+  }
 }
 ```
 
 ### Remove Game from Backlog
 ```http
-DELETE /users/backlog/:gameId
-Authorization: Bearer <token>
+DELETE /users/backlog
+```
+
+Request body:
+```json
+{
+  "gameId": 1
+}
+```
+
+Response:
+```json
+{ "status": "success" }
 ```
 
 ---
 
-## ⭐ Reviews
+## Reviews (authenticated)
 
 ### Get User Reviews
 ```http
-GET /users/reviews?limit=10&offset=0
-Authorization: Bearer <token>
+GET /users/reviews
+```
+
+Response:
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "game_id": 1,
+      "user_id": 1,
+      "title": "Great",
+      "content": "...",
+      "rating": 9,
+      "game_title": "Example"
+    }
+  ]
+}
 ```
 
 ### Create Review
 ```http
 POST /users/reviews
-Authorization: Bearer <token>
 ```
 
-**Request Body:**
+Request body:
 ```json
 {
   "gameId": 1,
-  "title": "Amazing Game!",
-  "content": "This game exceeded all my expectations...",
-  "rating": 9
+  "rating": 9,
+  "reviewText": "...",
+  "title": "Great"
 }
 ```
 
-### Update Review
-```http
-PUT /users/reviews/:gameId
-Authorization: Bearer <token>
-```
-
-**Request Body:**
+Response (201):
 ```json
 {
-  "title": "Updated Review Title",
-  "content": "Updated review content...",
-  "rating": 10
+  "status": "success",
+  "data": {
+    "id": 1,
+    "game_id": 1,
+    "user_id": 1,
+    "rating": 9,
+    "title": "Great",
+    "content": "..."
+  }
 }
 ```
 
 ### Delete Review
 ```http
-DELETE /users/reviews/:gameId
-Authorization: Bearer <token>
+DELETE /users/reviews
+```
+
+Request body:
+```json
+{
+  "gameId": 1
+}
+```
+
+Response:
+```json
+{ "status": "success" }
 ```
 
 ---
 
-## ⏱️ Playtime Tracking
-
-### Log Playtime
-```http
-POST /users/playtime
-Authorization: Bearer <token>
-```
-
-**Request Body:**
-```json
-{
-  "gameId": 1,
-  "playtimeMinutes": 120,
-  "notes": "Great session, made good progress!"
-}
-```
-
-### Get Playtime Statistics
-```http
-GET /users/playtime/stats
-Authorization: Bearer <token>
-```
-
-**Response:**
-```json
-{
-  "status": "success",
-  "data": {
-    "totalPlaytime": 1440,
-    "gamesPlayed": 3,
-    "averagePlaytime": 480,
-    "recentActivity": [
-      {
-        "gameId": 1,
-        "gameTitle": "Elden Ring",
-        "lastPlayed": "2024-01-15T10:30:00.000Z",
-        "totalPlaytime": 720
-      }
-    ]
-  }
-}
-```
-
----
-
-## 🚨 Error Responses
+## Error Responses
 
 All error responses follow this format:
 ```json
@@ -377,18 +382,18 @@ All error responses follow this format:
 }
 ```
 
-**Common HTTP Status Codes:**
-- `400` - Bad Request (invalid input)
-- `401` - Unauthorized (missing or invalid token)
-- `404` - Not Found (resource doesn't exist)
-- `409` - Conflict (resource already exists)
-- `500` - Internal Server Error
+Common HTTP Status Codes:
+- 400 - Bad Request (invalid input)
+- 401 - Unauthorized (missing or invalid token)
+- 404 - Not Found (resource doesn't exist)
+- 409 - Conflict (resource already exists)
+- 500 - Internal Server Error
 
 ---
 
-## 🔧 Environment Variables
+## Environment Variables
 
-Create a `.env` file in the root directory:
+Create a `.env` file in the project root:
 
 ```env
 # Database Configuration
@@ -408,20 +413,20 @@ NODE_ENV=development
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 1. Install dependencies:
 ```bash
 npm install
 ```
 
-2. Set up your database using the provided `schema.sql`
+2. Set up your database using `src/schema.sql`.
 
-3. Create a `.env` file with your configuration
+3. Create a `.env` file with your configuration.
 
 4. Start the development server:
 ```bash
 npm run dev
 ```
 
-The API will be available at `http://localhost:3000`
+The API will be available at `http://localhost:PORT`.
