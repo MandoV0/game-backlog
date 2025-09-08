@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { registerUser, loginUser, addGameToBacklog, deleteGameFromBacklog, updateGameBacklogStatus, createUserReview, deleteUserReview, getUserReviews } from '../controllers/user.controller';
+import { registerUser, loginUser, addGameToBacklog, deleteGameFromBacklog, updateGameBacklogStatus, createUserReview, deleteUserReview, getUserReviews, getUserGameBacklog } from '../controllers/user.controller';
 import { authMiddleware } from '../middlewares/auth.middleware';
 
 const router = Router();
@@ -14,5 +14,7 @@ router.delete('/backlog', authMiddleware, deleteGameFromBacklog);
 router.post('/reviews', authMiddleware, createUserReview);
 router.delete('/reviews', authMiddleware, deleteUserReview);
 router.get('/reviews', authMiddleware, getUserReviews);
+
+router.get('/backlog', authMiddleware, getUserGameBacklog);
 
 export default router;

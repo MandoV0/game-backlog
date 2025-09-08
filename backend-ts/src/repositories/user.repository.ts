@@ -1,6 +1,6 @@
 import { pool } from '../config/database';
 import bcrypt from 'bcrypt';
-import { User } from '../models/user.model';
+import { User, UserGameBacklog } from '../models/user.model';
 import { UserGameReviews } from '../models/review.model';
 
 const SALT_ROUNDS = 10;
@@ -61,6 +61,17 @@ export const getUserReviews = async (userId: number): Promise<UserGameReviews[]>
         `SELECT r.game_id, r.user_id,  r.title, r.content, r.rating, g.title as "game_title"
         FROM reviews r JOIN games g ON r.game_id = g.id
         WHERE r.user_id = $1`,
+        [userId]
+    );
+    return result.rows;
+}
+
+export const getUserGameBacklog = async (userId: number): Promise<UserGameBacklog[]> => {
+    const result = await pool.query<UserGameBacklog>(
+        `SELECT ug.user_id, ug.game_id, ug.status, ug.rating, ug.started_at, ug.finished_at, g.title
+        FROM user_games ug
+        LEFT JOIN games g ON ug.game_id = g.id
+        WHERE ug.user_id = $1`,
         [userId]
     );
     return result.rows;

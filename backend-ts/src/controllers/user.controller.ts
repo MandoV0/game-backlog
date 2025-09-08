@@ -97,3 +97,15 @@ export const getUserReviews = async (req: Request, res: Response, next: NextFunc
         next(err);
     }
 };
+
+export const getUserGameBacklog = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.user?.id;
+        if (!userId) throw { status: 401, message: 'Unauthorized' };
+        const backlog = await userService.getUserGameBacklog(userId);
+        res.json({ status: 'success', data: backlog });
+    }
+    catch (err) {
+        next(err);
+    }
+};

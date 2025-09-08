@@ -2,6 +2,7 @@ import * as userRepo from '../repositories/user.repository';
 import * as gameService from './game.service';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import { UserGameBacklog } from '../models/user.model';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret';
 
@@ -96,4 +97,8 @@ export const deleteUserReview = async (userId: number, gameId: number) => {
 
 export const getUserReviews = async (userId: number) => {
     return await userRepo.getUserReviews(userId);
+}
+
+export const getUserGameBacklog = async (userId: number): Promise<UserGameBacklog[]> => {
+    return await userRepo.getUserGameBacklog(userId);
 }

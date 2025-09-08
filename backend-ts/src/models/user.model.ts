@@ -31,3 +31,13 @@ export interface Review {
     created_at: string;
     updated_at: string;
 }
+
+export interface UserGameBacklog {
+    game_id: number;
+    user_id: number;
+    status: GameStatus;
+    rating?: number;
+    started_at?: string;
+    finished_at?: string;
+    title: string;
+}
