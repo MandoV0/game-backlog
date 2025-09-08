@@ -72,3 +72,16 @@ export const getGameReviewStatistics = async (req: Request, res: Response, next:
         next(err);
     }
 };
+
+export const getGameStatusStatistics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const gameId = parseInt(req.params.id);
+        if (isNaN(gameId)) {
+            return res.status(400).json({ status: 'error', message: 'Invalid game ID' });
+        }
+        const statistics = await gameService.getGameStatusStatistics(gameId);
+        res.json({ status: 'success', data: statistics });
+    } catch (err) {
+        next(err);
+    }
+};

@@ -1,6 +1,6 @@
 import { pool } from "../config/database";
 import { Game, GameImage, Genre, Platform } from "../models/game.model";
-import { RatingStatistics } from "../models/review.model";
+import { GameStatusStatistics, RatingStatistics } from "../models/review.model";
 
 export interface GameWithRelations extends Game {
     platforms: Platform[];
@@ -118,6 +118,19 @@ export const getReviewStatisticsByGameId = async (gameId: number): Promise<Ratin
             SUM(CASE WHEN rating = 1 THEN 1 ELSE 0 END) AS one_star_reviews,
             SUM(CASE WHEN rating = 0 THEN 1 ELSE 0 END) AS zero_star_reviews
         FROM reviews
+        WHERE game_id = $1`,
+        [gameId]);
+    return result.rows[0];
+}
+
+export const getGameStatusStatistics = async (gameId: number): Promise<GameStatusStatistics> => {
+    const result = await pool.query<GameStatusStatistics>(`
+        SELECT
+        SUM(CASE WHEN status = 'playing' THEN 1 ELSE 0 END) AS playing,
+        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed,
+        SUM(CASE WHEN status = 'dropped' THEN 1 ELSE 0 END) AS dropped,
+        SUM(CASE WHEN status = 'backlog' THEN 1 ELSE 0 END) AS backlog
+        FROM user_games
         WHERE game_id = $1`,
         [gameId]);
     return result.rows[0];

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAllGames, getGameById, getGameReviews, getGameReviewStatistics, getGenres, getPlatforms } from '../controllers/games.controller';
+import { getAllGames, getGameById, getGameReviews, getGameReviewStatistics, getGameStatusStatistics, getGenres, getPlatforms } from '../controllers/games.controller';
 
 const router = Router();
 
@@ -13,6 +13,8 @@ router.get('/:id', getGameById);
 router.get('/:id/reviews', getGameReviews);
 
 router.get('/:id/review-statistics', getGameReviewStatistics);
+
+router.get('/:id/status-statistics', getGameStatusStatistics);
 
 
 export default router;

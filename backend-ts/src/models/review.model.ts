@@ -33,3 +33,10 @@ export interface UserGameReviews {
     rating: number;
     game_title: string;
 }
+
+export interface GameStatusStatistics {
+    playing: number;
+    completed: number;
+    backlog: number;
+    dropped: number;
+}
