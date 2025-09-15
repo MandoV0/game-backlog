@@ -13,9 +13,9 @@ const Header = () => {
         <header className="header">
             <div className="logo"><img src={logo} alt="Game Backlog Logo" /></div>
             <nav className={`nav ${isOpen ? "open" : ""}`}>
-                <a href="/">Home</a>
-                <a href="/about">About</a>
-                <a href="/contact">Contact</a>
+                <a href="/" className="nav-link">Home</a>
+                <a href="/about" className="nav-link">About</a>
+                <a href="/contact" className="nav-link">Contact</a>
             </nav>
             <div className="burger" onClick={toggleMenu}>
                 &#9776;

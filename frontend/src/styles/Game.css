@@ -52,8 +52,8 @@
 .game-card {
     border-radius: 1rem;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    background: #815757;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+    background: var(--color-primary);
     width: 250px;
     height: 400px;
     margin: 0;
@@ -61,14 +61,15 @@
 }
 
 .game-card:hover {
-    transform: scale(1.05);
+    transform: scale(1.03);
     transition: transform 0.3s ease;
 }
 
 .game-cover-img {
     width: 270px;
-    height: 320px;
-    object-fit: fill;
+    height: 335px;
+    object-fit: cover;
+    display: block
 }
 
 .h1 {
@@ -97,6 +98,6 @@
 
 @media (max-width: 500px) {
   .game-grid {
-    grid-template-columns: 1fr; /* force 1 column */
+    grid-template-columns: 1fr;
   }
 }

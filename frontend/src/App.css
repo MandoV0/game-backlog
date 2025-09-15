@@ -1,3 +1,33 @@
+body {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+p {
+  margin-bottom: 1rem;
+}
+
+:root {
+  --color-primary: #4F46E5;
+  --color-secondary: #8B5CF6;
+  --color-accent: #597a8d;
+  --color-background: #F9FAFB;
+  --color-surface: #FFFFFF;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6B7280;
+  --color-muted: #D1D5DB;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #3B82F6;
+}
+
+
 #root {
   width: 100%;
   min-height: 100vh;
