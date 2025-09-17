@@ -1,5 +1,5 @@
 import React from "react";
-//import "./Pagination.css";
+import "../styles/Pagination.css";
 
 interface PaginationProps {
   page: number;
@@ -12,7 +12,7 @@ const Pagination: React.FC<PaginationProps> = ({ page, totalPages, onPageChange 
     <button disabled={page === 1} onClick={() => onPageChange(page - 1)}>
       Prev
     </button>
-    <span>
+    <span className="page-span">
       Page {page} of {totalPages}
     </span>
     <button disabled={page === totalPages} onClick={() => onPageChange(page + 1)}>

@@ -14,8 +14,8 @@ const Header = () => {
             <div className="logo"><img src={logo} alt="Game Backlog Logo" /></div>
             <nav className={`nav ${isOpen ? "open" : ""}`}>
                 <a href="/" className="nav-link">Home</a>
-                <a href="/about" className="nav-link">About</a>
-                <a href="/contact" className="nav-link">Contact</a>
+                <a href="/backlog" className="nav-link">Backlog</a>
+                <a href="/auth" className="nav-link">Profile</a>
             </nav>
             <div className="burger" onClick={toggleMenu}>
                 &#9776;

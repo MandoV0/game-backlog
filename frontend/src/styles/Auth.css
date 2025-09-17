@@ -17,7 +17,7 @@
 
 .auth-container h1 {
   text-align: center;
-  color: var(--color-primary);
+  color: var(--color-text-primary);
   margin-bottom: 2rem;
 }
 
@@ -32,7 +32,7 @@
   border-radius: 1rem;
   border: 1px solid var(--color-muted);
   font-size: 1rem;
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
 }
 
 .auth-form input:focus {
@@ -46,7 +46,7 @@
   border-radius: 1rem;
   border: none;
   background-color: var(--color-primary);
-  color: var(--color-surface);
+  color: var(--color-text-primary);
   font-weight: bold;
   cursor: pointer;
   transition: background 0.3s;
@@ -72,7 +72,7 @@
 .toggle-mode button {
   background: none;
   border: none;
-  color: var(--color-primary);
+  color: var(--color-text-primary);
   font-weight: bold;
   cursor: pointer;
   margin-left: 0.5rem;

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "../styles/Auth.css";
+import { loginUser, registerUser } from "../api/Client";
+import { useNavigate } from "react-router-dom";
 
 const AuthPage: React.FC = () => {
     const [mode, setMode] = useState<"login" | "register">("login");
@@ -7,8 +9,11 @@ const AuthPage: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const navigate = useNavigate();
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (mode === "register" && !username) {
@@ -19,6 +24,24 @@ const AuthPage: React.FC = () => {
         if (!email || !password) {
             setError("Please fill all required fields");
             return;
+        }
+
+        setLoading(true);
+        try {
+            let res;
+            if (mode === "login") {
+                res = await loginUser({ email, password });
+            } else {
+                res = await registerUser({ username, email, password });
+            }
+
+            localStorage.setItem("token", res.data.token);
+
+            navigate("/");
+        } catch (err : any) {
+            setError(err?.message || "Authentication failed")
+        } finally {
+            setLoading(false);
         }
 
         setError("");
@@ -52,7 +75,7 @@ const AuthPage: React.FC = () => {
                     />
                     {error && <p className="auth-error">{error}</p>}
                     <button type="submit">
-                        {mode === "login" ? "Login" : "Register"}
+                        {loading ? "Please wait..." : mode === "login" ? "Login" : "Register"}
                     </button>
                 </form>
                 <div className="toggle-mode">

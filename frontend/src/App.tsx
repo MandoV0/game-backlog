@@ -4,6 +4,7 @@ import GameBrowsingPage from "./pages/GameBrowsingPage";
 import GameDetailsPage from "./pages/GameDetailsPage";
 import AuthPage from "./pages/AuthPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { GameBacklogPage } from "./pages/GameBacklogPage";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ function App() {
             <Route path="/" element={<GameBrowsingPage />} />
             <Route path="/game/:id" element={<GameDetailsPage/>} />
             <Route path="/auth" element={<AuthPage/>}/>
+            <Route path="/backlog" element={<GameBacklogPage/>}/>
         </Routes>
         </Router>
     </QueryClientProvider>

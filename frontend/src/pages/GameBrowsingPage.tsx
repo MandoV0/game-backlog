@@ -8,7 +8,7 @@ import type { UseQueryOptions } from "@tanstack/react-query";
 import type { GameAPIResponse } from "../api/Games";
 import { getGames } from "../api/Games";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 20;
 
 function GameBrowsingPage() {
     const [page, setPage] = useState(1);

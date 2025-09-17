@@ -37,4 +37,18 @@ async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise
     }
 }
 
+export const loginUser = (body: { email: string, password: string }): Promise<AuthSuccess> => 
+    apiFetch(`/users/login`, { method: "POST", body: JSON.stringify(body)});
+
+export const registerUser = (body: { username: string, email: string, password: string }): Promise<AuthSuccess> => 
+    apiFetch(`/users/register`, { method: "POST", body: JSON.stringify(body)});
+
 export default apiFetch;
+
+export interface AuthSuccess {
+    status: "success";
+    data: {
+        user: { id: number; username: string; email: string; created_at: string };
+        token: string;
+    };
+}

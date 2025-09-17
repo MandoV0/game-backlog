@@ -22,6 +22,21 @@ export interface GameAPIResponse {
     results: GameAPIData[];
 }
 
+export interface GameBacklogData {
+    game_id: number;
+    user_id: number;
+    status: string;
+    rating: number;
+    started_at: string;
+    finished_at: string;
+    title: string;
+}
+
+export interface GameBacklogResponse {
+  status: string;
+  data: GameBacklogData[];
+}
+
 export const getGames = (limit: number = 10, offset: number = 0): Promise<GameAPIResponse> =>
     apiFetch<GameAPIResponse>(`/games?limit=${limit}&offset=${offset}`);
 
@@ -30,3 +45,5 @@ export const getGameById = (id: number): Promise<GameAPIData> => apiFetch(`/game
 export const getReviews = (id: number, limit = 10, offset = 0) => apiFetch(`/games/${id}/reviews?limit=${limit}&offset=${offset}`);
 
 export const getReviewStats = (id: number) => apiFetch(`/games/${id}/review-statistics`);
+
+export const getUserBacklog = () => apiFetch<GameBacklogResponse>(`/users/backlog`); 
