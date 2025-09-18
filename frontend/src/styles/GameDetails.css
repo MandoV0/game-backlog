@@ -1,5 +1,7 @@
 .game-container {
     margin: 0 auto;
+    width: 100%;
+    max-width: 1200px;
     padding: 20px;
     overflow: hidden;
     border-radius: 1rem;
@@ -63,7 +65,8 @@
     background-color: var(--color-surface);
     border-radius: 1rem;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    width: 1200px;
+    width: 95%;
+    margin: 1rem;
     height: 600px;
     padding: 1rem;
     color: var(--color-text-primary);
@@ -180,4 +183,66 @@
 .pagination button:disabled {
     background: var(--color-muted);
     cursor: not-allowed;
+}
+
+/* Base stays desktop-friendly as you wrote it */
+
+/* Mobile/tablet adjustments */
+@media (max-width: 1024px) {
+  .game-container {
+    width: 90%;              /* take more screen space */
+    gap: 2rem;               /* smaller gap */
+  }
+
+  .game-left-container {
+    flex: 0 0 250px;         /* narrower sidebar */
+  }
+
+  .game-img-container {
+    height: 350px;           /* shrink image height */
+  }
+}
+
+@media (max-width: 768px) {
+  .game-container {
+    flex-direction: column;  /* stack left and right containers */
+    width: 95%;
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+
+  .game-left-container,
+  .game-right-container {
+    flex: unset;
+    width: 100%;
+  }
+
+  .game-img-container {
+    height: auto;            /* let image scale naturally */
+    max-height: 300px;
+  }
+
+  .game-info-container {
+    width: 100%;
+    margin: 0;
+    height: auto;            /* don’t fix height */
+  }
+}
+
+@media (max-width: 480px) {
+  .star {
+    font-size: 1.2rem;       /* smaller stars */
+  }
+
+  .review-form textarea {
+    height: 60px;
+  }
+
+  .pagination {
+    gap: 0.5rem;
+  }
+
+  .pagination button {
+    padding: 0.3rem 0.6rem;
+  }
 }

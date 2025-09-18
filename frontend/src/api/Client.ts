@@ -43,6 +43,14 @@ export const loginUser = (body: { email: string, password: string }): Promise<Au
 export const registerUser = (body: { username: string, email: string, password: string }): Promise<AuthSuccess> => 
     apiFetch(`/users/register`, { method: "POST", body: JSON.stringify(body)});
 
+export const createReview = (body: { gameId: number, rating: number, title: string, reviewText: string }): Promise<any> => 
+    apiFetch("/users/reviews", {
+        method: "POST",
+        body: JSON.stringify(body),
+});
+
+export const isGameInBacklog = (gameId: number): Promise<BacklogStatusResponse> => apiFetch(`/users/backlog/check?id=${gameId}`, { method: "GET" });
+
 export default apiFetch;
 
 export interface AuthSuccess {
@@ -51,4 +59,9 @@ export interface AuthSuccess {
         user: { id: number; username: string; email: string; created_at: string };
         token: string;
     };
+}
+
+export interface BacklogStatusResponse {
+    inBacklog: boolean;
+    status?: string;
 }

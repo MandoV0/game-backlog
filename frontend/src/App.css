@@ -125,3 +125,11 @@ footer {
   color: #666;
   margin-top: auto;
 }
+
+
+/* Makes it centered on mobile !!! */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}

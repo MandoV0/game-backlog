@@ -102,3 +102,14 @@ export const getUserReviews = async (userId: number) => {
 export const getUserGameBacklog = async (userId: number): Promise<UserGameBacklog[]> => {
     return await userRepo.getUserGameBacklog(userId);
 }
+
+export const getUserBacklogGame = async (gameId: number, userId: number): Promise<{ inBacklog: boolean, status: string | null }> => {
+    if (!gameId || !userId) throw { status: 400, message: 'Game ID and User ID are required' };
+    const backlogItem = await userRepo.getUserBacklogGame(userId, gameId); 
+
+    if (backlogItem) {
+        return { inBacklog: true, status: backlogItem.status };
+    } else {
+        return { inBacklog: false, status: null };
+    }
+}

@@ -76,3 +76,8 @@ export const getUserGameBacklog = async (userId: number): Promise<UserGameBacklo
     );
     return result.rows;
 }
+
+export const getUserBacklogGame = async(userId: number, gameId: number): Promise<UserGameBacklog> => {
+    const result = await pool.query(`SELECT * FROM user_games WHERE gameid = $1 AND userid = $2`, [gameId, userId]);
+    return result.rows[0] || null;
+}

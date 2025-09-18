@@ -109,3 +109,18 @@ export const getUserGameBacklog = async (req: Request, res: Response, next: Next
         next(err);
     }
 };
+
+export const isGameInBacklog = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.user?.id;
+        const gameId  = Number(req.query.id);
+
+        if (!userId) throw { status: 401, message: 'Unauthorized' };
+        if (!gameId) throw { status: 400, message: 'gameId is required' };
+
+        const isBacklogged = await userService.getUserBacklogGame(gameId, userId);
+        res.json({ status: 'success', data: isBacklogged });
+    } catch (err) {
+        next(err);
+    }
+}

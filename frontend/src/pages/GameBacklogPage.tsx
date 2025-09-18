@@ -3,11 +3,26 @@ import React from "react";
 import { getUserBacklog, type GameBacklogData, type GameBacklogResponse } from "../api/Games";
 import "../styles/Game.css";
 import Header from "../components/Header";
+import { isUserLoggedIn } from "../helpers/JwtHelper";
+import { useNavigate } from "react-router-dom";
+
 
 export const GameBacklogPage = () => {
+    const navigate = useNavigate();
+    
+    if (!isUserLoggedIn()) {
+        return (
+            <>
+                <Header></Header>
+                <h1>Login to be able to backlog your Favorite games!</h1>
+                <button onClick={() => navigate("/auth")}>Login/Sign up</button>
+            </>
+        )
+    }
+
     const { data, isLoading, error } = useQuery<GameBacklogData[], Error>({
         queryKey: ["userBacklog"],
-        queryFn: async() => {
+        queryFn: async () => {
             const res = await getUserBacklog();
             return res.data;
         },

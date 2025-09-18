@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "../components/Header";
 import "../styles/GameDetails.css";
-import Pagination from "../components/Pagination";
-import { getGameById } from "../api/Games";
-import type { GameAPIData } from "../api/Games";
+import { getGameById, getReviews, getReviewStats } from "../api/Games";
+import type { GameAPIData, GameBacklogData, GameReviewData, GameReviewStatsData } from "../api/Games";
 import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
+import { GameRatingContainer } from "../components/GameRatingContainer";
+import ReviewList from "../components/ReviewList";
+import { isGameInBacklog, type BacklogStatusResponse } from "../api/Client";
 
 export interface Game {
     id: number;
@@ -52,12 +54,64 @@ function GameDetailsPage() {
         queryFn: () => getGameById(gameId),
     });
 
+    const { data: reviewStatsData, isLoading: reviewStatsLoading, error: reviewStatsError } = useQuery<GameReviewStatsData, Error>({
+        queryKey: ["reviewStats", gameId],
+        queryFn: async () => {
+            const res = await getReviewStats(gameId);
+            return res.data;
+        },
+    });
+
+    const { data: reviewsData, isLoading: reviewsLoading, error: reviewsError } = useQuery<GameReviewData[], Error>({
+        queryKey: ["reviews", gameId],
+        queryFn: async () => {
+            try {
+                const res = await getReviews(gameId);
+                return res.data;
+            } catch (err) {
+                console.error(err);
+                return [];
+            }
+        },
+    });
+
+    const { data: backlogStatusData, isLoading: backlogStatusLoading, error: backlogStatusError } = useQuery<BacklogStatusResponse, Error>({
+        queryKey: ["backlogStatus", gameId],
+        queryFn: () => isGameInBacklog(gameId),
+        onSuccess: (data) => {
+            if (data.inBacklog && data.status) {
+                const statusMap: Record<string, string> = {
+                    backlog: "Wishlist",
+                    playing: "Playing",
+                    completed: "Completed",
+                    dropped: "Dropped",
+                };
+                setBacklogStatus(statusMap[data.status] || "Wishlist");
+            }
+        },
+    });
+
+
+
+    if (backlogStatusData || backlogStatusLoading || backlogStatusError) {
+        console.error("");
+    }
+
+    const handleBacklogStatusChange = async (newStatus: string) => {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const existing = 
+    }
+
+    if (reviewStatsLoading) return <p>Loading stats...</p>;
+    if (reviewStatsError) return <p>Error loading stats: {reviewStatsError.message}</p>;
+
     if (isLoading) return <p>Loading games...</p>;
     if (error) return <p>Error loading games: {error.message}</p>;
 
-    const start = (page - 1) * REVIEWS_PER_PAGE;
-    const currentReviews = mockReviews.slice(start, start + REVIEWS_PER_PAGE);
-    const totalPages = Math.ceil(mockReviews.length / REVIEWS_PER_PAGE);
+    if (reviewsLoading) return <p>Loading reviews...</p>;
+    if (reviewsError) return <p>Error loading reviews: {reviewsError.message}</p>;
 
     return (
         <>
@@ -66,28 +120,13 @@ function GameDetailsPage() {
                 <div className="game-left-container">
                     <div className="game-img-container">
                         <img
-                            src={data?.images ? data.images[0].url :  `https://placehold.co/300x400`}
+                            src={data?.images ? data.images[0].url : `https://placehold.co/300x400`}
                             className="game-cover-img"
                             alt="Game cover"
                         />
                     </div>
 
-                    <div className="game-rating-container">
-                        <h1>Ratings</h1>
-                        {Object.entries(mockRatingStats.distribution)
-                            .sort(([a], [b]) => Number(b) - Number(a))
-                            .map(([stars, count]) => (
-                                <span key={stars} className="star">
-                                    {"★".repeat(Number(stars)) + "☆".repeat(5 - Number(stars))}{" "}
-                                    {count}
-                                </span>
-                            ))}
-                        <p>
-                            Average Rating: {mockRatingStats.average} / 5 (
-                            {mockRatingStats.totalReviews} Reviews)
-                        </p>
-                    </div>
-
+                    <GameRatingContainer data={reviewStatsData} />
 
                     <div className="backlog-container">
                         <h2>Backlog</h2>
@@ -119,42 +158,7 @@ function GameDetailsPage() {
                         </div>
                     </div>
 
-                    <div className="review-section">
-                        <h2>User Reviews</h2>
-
-                        <button
-                            className="review-btn"
-                            onClick={() => setShowReviewForm(!showReviewForm)}
-                        >
-                            {showReviewForm ? "Cancel" : "Write a Review"}
-                        </button>
-
-                        {showReviewForm && (
-                            <form className="review-form">
-                                <textarea placeholder="Write your review here..." />
-                                <button type="submit">Submit Review</button>
-                            </form>
-                        )}
-
-                        <ul className="review-list">
-                            {currentReviews.map((review) => (
-                                <li key={review.id} className="review-item">
-                                    <div className="review-header">
-                                        <span className="review-username">{review.username}</span>
-                                        <span className="review-stars">
-                                            {"★".repeat(review.stars) + "☆".repeat(5 - review.stars)}
-                                        </span>
-                                    </div>
-                                    <p>{review.text}</p>
-                                    <small>
-                                        {new Date(review.createdAt).toLocaleDateString()}
-                                    </small>
-                                </li>
-                            ))}
-                        </ul>
-
-                        <Pagination onPageChange={setPage} page={page} totalPages={totalPages}></Pagination>
-                    </div>
+                    <ReviewList reviews={reviewsData || []} gameId={gameId} />
                 </div>
             </div>
         </>
@@ -162,31 +166,3 @@ function GameDetailsPage() {
 };
 
 export default GameDetailsPage;
-
-
-export const mockReviews: Review[] = [
-    { id: 1, username: "PlayerOne", stars: 5, text: "Amazing game, loved every second!", createdAt: "2025-09-10" },
-    { id: 2, username: "RPGFan", stars: 4, text: "Great story, some bugs though.", createdAt: "2025-09-12" },
-    { id: 3, username: "CasualGamer", stars: 3, text: "It was okay, not bad but not great.", createdAt: "2025-09-13" },
-    { id: 4, username: "Speedrunner", stars: 5, text: "Best game for speedruns!", createdAt: "2025-09-14" },
-    { id: 5, username: "LoreMaster", stars: 4, text: "Loved the worldbuilding!", createdAt: "2025-09-14" },
-    { id: 6, username: "BugHunter", stars: 2, text: "Crashes often, needs patches.", createdAt: "2025-09-14" },
-    { id: 7, username: "IndieDev", stars: 5, text: "One of the best RPGs ever.", createdAt: "2025-09-14" },
-    { id: 8, username: "NoobMaster69", stars: 1, text: "Too hard, not for me.", createdAt: "2025-09-14" },
-    { id: 9, username: "RetroFan", stars: 4, text: "Reminds me of old classics.", createdAt: "2025-09-14" },
-    { id: 10, username: "Collector", stars: 5, text: "Bought deluxe edition, worth it!", createdAt: "2025-09-14" },
-    { id: 11, username: "StreamerGirl", stars: 5, text: "Great for streaming, my chat loved it.", createdAt: "2025-09-15" },
-    { id: 12, username: "SoloPlayer", stars: 3, text: "Gets repetitive after a while.", createdAt: "2025-09-15" }
-];
-
-export const mockRatingStats: RatingStats = {
-    totalReviews: 9600,
-    average: 4.2,
-    distribution: {
-        5: 5000,
-        4: 2000,
-        3: 1000,
-        2: 500,
-        1: 100
-    }
-};

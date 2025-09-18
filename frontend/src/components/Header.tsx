@@ -15,7 +15,7 @@ const Header = () => {
             <nav className={`nav ${isOpen ? "open" : ""}`}>
                 <a href="/" className="nav-link">Home</a>
                 <a href="/backlog" className="nav-link">Backlog</a>
-                <a href="/auth" className="nav-link">Profile</a>
+                <a href="/profile" className="nav-link">Profile</a>
             </nav>
             <div className="burger" onClick={toggleMenu}>
                 &#9776;
