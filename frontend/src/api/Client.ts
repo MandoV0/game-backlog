@@ -62,6 +62,11 @@ export interface AuthSuccess {
 }
 
 export interface BacklogStatusResponse {
+    status : string;
+    data: BacklogStatusData;
+}
+
+export interface BacklogStatusData {
     inBacklog: boolean;
     status?: string;
 }

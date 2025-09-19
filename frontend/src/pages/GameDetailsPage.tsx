@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "../components/Header";
 import "../styles/GameDetails.css";
@@ -8,6 +8,7 @@ import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
 import { GameRatingContainer } from "../components/GameRatingContainer";
 import ReviewList from "../components/ReviewList";
 import { isGameInBacklog, type BacklogStatusResponse } from "../api/Client";
+import { BacklogStatusComponent } from "../components/BacklogStatusComponent";
 
 export interface Game {
     id: number;
@@ -45,10 +46,6 @@ function GameDetailsPage() {
     const { id } = useParams<{ id: string }>();
     const gameId = Number(id);
 
-    const [page, setPage] = useState(1);
-    const [showReviewForm, setShowReviewForm] = useState(false);
-    const [backlogStatus, setBacklogStatus] = useState("Wishlist");
-
     const { data, isLoading, error } = useQuery<GameAPIData, Error>({
         queryKey: ["game", gameId],
         queryFn: () => getGameById(gameId),
@@ -75,35 +72,6 @@ function GameDetailsPage() {
         },
     });
 
-    const { data: backlogStatusData, isLoading: backlogStatusLoading, error: backlogStatusError } = useQuery<BacklogStatusResponse, Error>({
-        queryKey: ["backlogStatus", gameId],
-        queryFn: () => isGameInBacklog(gameId),
-        onSuccess: (data) => {
-            if (data.inBacklog && data.status) {
-                const statusMap: Record<string, string> = {
-                    backlog: "Wishlist",
-                    playing: "Playing",
-                    completed: "Completed",
-                    dropped: "Dropped",
-                };
-                setBacklogStatus(statusMap[data.status] || "Wishlist");
-            }
-        },
-    });
-
-
-
-    if (backlogStatusData || backlogStatusLoading || backlogStatusError) {
-        console.error("");
-    }
-
-    const handleBacklogStatusChange = async (newStatus: string) => {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-
-        const existing = 
-    }
-
     if (reviewStatsLoading) return <p>Loading stats...</p>;
     if (reviewStatsError) return <p>Error loading stats: {reviewStatsError.message}</p>;
 
@@ -128,19 +96,7 @@ function GameDetailsPage() {
 
                     <GameRatingContainer data={reviewStatsData} />
 
-                    <div className="backlog-container">
-                        <h2>Backlog</h2>
-                        <select
-                            value={backlogStatus}
-                            onChange={(e) => setBacklogStatus(e.target.value)}
-                        >
-                            <option value="Wishlist">📅 Wishlist</option>
-                            <option value="Playing">🎮 Playing</option>
-                            <option value="Completed">✅ Completed</option>
-                            <option value="Dropped">❌ Dropped</option>
-                        </select>
-                        <p className="backlog-status">Status: {backlogStatus}</p>
-                    </div>
+                    <BacklogStatusComponent gameId={gameId} />
                 </div>
 
                 <div className="game-right-container">
