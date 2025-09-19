@@ -2,7 +2,7 @@ import * as gamesRepo from '../repositories/game.repository';
 import { Game } from '../models/game.model';
 import { PaginatedResult } from '../models/pagination.dto';
 import { GameWithRelations } from '../repositories/game.repository';
-import { GameStatusStatistics, RatingStatistics } from '../models/review.model';
+import { GameStatusStatistics, RatingStatistics, Review } from '../models/review.model';
 
 export const getAllGames = async (limit: number, offset: number): Promise<PaginatedResult<Game>> => {
     const { games, count } = await gamesRepo.getAllGames(limit, offset);
@@ -25,13 +25,16 @@ export const getPlatforms = async (): Promise<{ id: number; name: string }[]> =>
     return await gamesRepo.getAllPlatforms();
 }
 
-export const getGameReviews = async (gameId: number, limit: number = 10, offset: number = 0): Promise<any[]> => {
+export const getGameReviews = async (gameId: number, limit: number = 10, offset: number = 0): Promise<PaginatedResult<any[]>> => {
     if (!gameId) throw { status: 400, message: 'Game ID is required' };
     
-    if (!limit) limit = 10;
-    if (!offset) offset = 0;
+    const reviews = await gamesRepo.getReviewsByGameId(gameId, limit, offset);
+    const count = await gamesRepo.getReviewCountByGameId(gameId);
 
-    return await gamesRepo.getReviewsByGameId(gameId, limit, offset);
+    return {
+        count,
+        results: reviews
+    };
 }
 
 export const getGameReviewStatistics = async (gameId: number): Promise<RatingStatistics> => {

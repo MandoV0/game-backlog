@@ -59,27 +59,11 @@ function GameDetailsPage() {
         },
     });
 
-    const { data: reviewsData, isLoading: reviewsLoading, error: reviewsError } = useQuery<GameReviewData[], Error>({
-        queryKey: ["reviews", gameId],
-        queryFn: async () => {
-            try {
-                const res = await getReviews(gameId);
-                return res.data;
-            } catch (err) {
-                console.error(err);
-                return [];
-            }
-        },
-    });
-
     if (reviewStatsLoading) return <p>Loading stats...</p>;
     if (reviewStatsError) return <p>Error loading stats: {reviewStatsError.message}</p>;
 
     if (isLoading) return <p>Loading games...</p>;
     if (error) return <p>Error loading games: {error.message}</p>;
-
-    if (reviewsLoading) return <p>Loading reviews...</p>;
-    if (reviewsError) return <p>Error loading reviews: {reviewsError.message}</p>;
 
     return (
         <>
@@ -114,7 +98,7 @@ function GameDetailsPage() {
                         </div>
                     </div>
 
-                    <ReviewList reviews={reviewsData || []} gameId={gameId} />
+                    <ReviewList gameId={gameId} />
                 </div>
             </div>
         </>

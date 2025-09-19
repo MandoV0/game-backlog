@@ -50,7 +50,10 @@ export interface GameReviewData {
 
 export interface GameReviewResponse {
     status: string;
-    data: GameReviewData[];
+    data: {
+        count: number;
+        results: GameReviewData[];
+    };
 }
 
 export interface GameReviewStatsData {

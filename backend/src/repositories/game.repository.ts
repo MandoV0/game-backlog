@@ -101,6 +101,11 @@ export const getReviewsByGameId = async (gameId: number, limit: number, offset: 
     return result.rows;
 }
 
+export const getReviewCountByGameId = async (gameId: number): Promise<number> => {
+    const result = await pool.query<{ count: string }>(`SELECT COUNT(*) FROM reviews WHERE game_id = $1`, [gameId]);
+    return parseInt(result.rows[0].count, 10);
+}
+
 export const getReviewStatisticsByGameId = async (gameId: number): Promise<RatingStatistics> => {
     const result = await pool.query<RatingStatistics>(`
         SELECT 
