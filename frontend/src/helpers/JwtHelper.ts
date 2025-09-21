@@ -27,3 +27,28 @@ export function isUserLoggedIn(): boolean {
     if (!token) return false;
     return isTokenValid(token);
 }
+
+/**
+ * Gets the user ID from the JWT token stored in localStorage.
+ * @returns The user ID if the token exists and is valid, otherwise -1.
+ */
+export const getTokenUserId = (): number => {
+    const token = localStorage.getItem("token");
+    if (!token) return -1;
+
+    try {
+        const decoded = jwtDecode<JwtPayload>(token);
+        return decoded.id || -1;
+    } catch (e) {
+        return -1;
+    }
+};
+
+/**
+ * Gets the current user ID from the JWT token (alias for getTokenUserId).
+ * @returns The user ID if the token exists and is valid, otherwise null.
+ */
+export const getCurrentUserId = (): number | null => {
+    const userId = getTokenUserId();
+    return userId === -1 ? null : userId;
+};

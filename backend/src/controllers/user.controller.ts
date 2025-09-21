@@ -57,7 +57,7 @@ export const deleteGameFromBacklog = async (req: Request, res: Response, next: N
         res.json({ status: 'success' })
     } catch (err: any) {
         next(err);
-    }   
+    }
 };
 
 export const createUserReview = async (req: Request, res: Response, next: NextFunction) => {
@@ -98,6 +98,19 @@ export const getUserReviews = async (req: Request, res: Response, next: NextFunc
     }
 };
 
+export const getUserReviewByGameId = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.user?.id;
+        const gameId = Number(req.params.gameId);
+        if (!userId) throw { status: 401, message: 'Unauthorized' };
+        if (!gameId) throw { status: 400, message: 'gameId is required' };
+        const review = await userService.getUserReviewByGameId(userId, gameId);
+        res.json({ status: 'success', data: review });
+    } catch (err) {
+        next(err);
+    }
+};
+
 export const getUserGameBacklog = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userId = req.user?.id;
@@ -113,7 +126,7 @@ export const getUserGameBacklog = async (req: Request, res: Response, next: Next
 export const isGameInBacklog = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userId = req.user?.id;
-        const gameId  = Number(req.query.id);
+        const gameId = Number(req.query.id);
 
         if (!userId) throw { status: 401, message: 'Unauthorized' };
         if (!gameId) throw { status: 400, message: 'gameId is required' };
@@ -124,3 +137,16 @@ export const isGameInBacklog = async (req: Request, res: Response, next: NextFun
         next(err);
     }
 }
+
+export const updateUserReview = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = req.user?.id;
+        const { gameId, rating, reviewText, title } = req.body;
+        if (!userId) throw { status: 401, message: 'Unauthorized' };
+
+        const result = await userService.updateUserReview(userId, gameId, rating, reviewText, title);
+        res.json({ status: 'success', data: result });
+    } catch (err) {
+        next(err);
+    }
+};

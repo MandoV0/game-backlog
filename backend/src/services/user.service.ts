@@ -99,6 +99,11 @@ export const getUserReviews = async (userId: number) => {
     return await userRepo.getUserReviews(userId);
 }
 
+export const getUserReviewByGameId = async (userId: number, gameId: number) => {
+    if (!gameId) throw { status: 400, message: 'Game ID is required' };
+    return await userRepo.getUserReviewByGameId(userId, gameId);
+}
+
 export const getUserGameBacklog = async (userId: number): Promise<UserGameBacklog[]> => {
     return await userRepo.getUserGameBacklog(userId);
 }
@@ -112,4 +117,9 @@ export const getUserBacklogGame = async (gameId: number, userId: number): Promis
     } else {
         return { inBacklog: false, status: null };
     }
+}
+
+export const updateUserReview = async (userId: number, gameId: number, rating: number, reviewText: string, title: string) => {
+    if (!userId || !gameId || !rating || !reviewText || !title) throw { status: 400, message: 'gameId, rating, review text, and title are required' };
+    return await userRepo.updateUserReview(userId, gameId, rating, reviewText, title);
 }

@@ -66,6 +66,17 @@ export const getUserReviews = async (userId: number): Promise<UserGameReviews[]>
     return result.rows;
 }
 
+export const getUserReviewByGameId = async (userId: number, gameId: number): Promise<any> => {
+    const result = await pool.query(
+        `SELECT r.id, r.game_id, r.user_id, r.title, r.content, r.rating, r.created_at, r.updated_at, u.username
+        FROM reviews r 
+        JOIN users u ON r.user_id = u.id
+        WHERE r.user_id = $1 AND r.game_id = $2`,
+        [userId, gameId]
+    );
+    return result.rows[0] || null;
+}
+
 export const getUserGameBacklog = async (userId: number): Promise<UserGameBacklog[]> => {
     const result = await pool.query<UserGameBacklog>(
         `SELECT ug.user_id, ug.game_id, ug.status, ug.rating, ug.started_at, ug.finished_at, g.title
@@ -79,5 +90,16 @@ export const getUserGameBacklog = async (userId: number): Promise<UserGameBacklo
 
 export const getUserBacklogGame = async(userId: number, gameId: number): Promise<UserGameBacklog> => {
     const result = await pool.query(`SELECT * FROM user_games WHERE game_id = $1 AND user_id = $2`, [gameId, userId]);
+    return result.rows[0] || null;
+}
+
+export const updateUserReview = async (userId: number, gameId: number, rating: number, reviewText: string, title: string): Promise<any> => {
+    const result = await pool.query(
+        `UPDATE reviews 
+         SET rating = $1, content = $2, title = $3, updated_at = NOW() 
+         WHERE user_id = $4 AND game_id = $5 
+         RETURNING id, game_id, user_id, title, content, rating, created_at, updated_at`,
+        [rating, reviewText, title, userId, gameId]
+    );
     return result.rows[0] || null;
 }

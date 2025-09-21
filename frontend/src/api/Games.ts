@@ -33,14 +33,15 @@ export interface GameBacklogData {
 }
 
 export interface GameBacklogResponse {
-  status: string;
-  data: GameBacklogData[];
+    status: string;
+    data: GameBacklogData[];
 }
 
 export interface GameReviewData {
     id: number;
     game_id: number;
     user_id: number;
+    username: string;
     rating: number;
     title: string;
     content: string;
@@ -86,10 +87,10 @@ export const getReviews = (id: number, limit = 10, offset = 0): Promise<GameRevi
 
 export const getReviewStats = (id: number): Promise<GameReviewStatsResponse> => apiFetch<GameReviewStatsResponse>(`/games/${id}/review-statistics`);
 
-export const getUserBacklog = () => apiFetch<GameBacklogResponse>(`/users/backlog`); 
+export const getUserBacklog = () => apiFetch<GameBacklogResponse>(`/users/backlog`);
 
 export const addToBacklog = (gameId: number) => apiFetch<GameBacklogData>(`/users/backlog`, { method: "POST", body: JSON.stringify({ gameId }) });
 
-export const removeFromBacklog = (gameId: number) => apiFetch<{status: string}>(`/users/backlog`, { method: "DELETE", body: JSON.stringify({ gameId })});
+export const removeFromBacklog = (gameId: number) => apiFetch<{ status: string }>(`/users/backlog`, { method: "DELETE", body: JSON.stringify({ gameId }) });
 
-export const updateBacklogStatus = (gameId: number, status: string) => apiFetch<GameBacklogData>(`/users/backlog`, { method: "PUT", body: JSON.stringify({ gameId, status })});
+export const updateBacklogStatus = (gameId: number, status: string) => apiFetch<GameBacklogData>(`/users/backlog`, { method: "PUT", body: JSON.stringify({ gameId, status }) });
