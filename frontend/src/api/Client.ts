@@ -5,8 +5,10 @@ APP_API_BASE_URL=http://localhost:3000/api/v1
 */
 
 async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    console.log("DEBUG!!!!:::::", import.meta.env.VITE_APP_API_BASE_URL);
     const token = localStorage.getItem("token");
-    const url = `${BASE_URL}${endpoint}`;
+    //const url = `${BASE_URL}${endpoint}`;
+    const url = `https://game-backlog-backend.onrender.com${endpoint}`; // Temporary fix for Render.com deployment
 
     console.log('Making API request to:', url);
     console.log('Request options:', options);
