@@ -1,4 +1,4 @@
-const BASE_URL = process.env.APP_API_BASE_URL || "MISSING_ENV_VAR_APP_API_BASE_URL";
+const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL || "http://localhost:5000/api/v1";
 /*
 APP_API_BASE_URL=https://game-backlog-backend.onrender.com/api/v1
 APP_API_BASE_URL=http://localhost:3000/api/v1
