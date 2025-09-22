@@ -23,7 +23,7 @@ app.use("/api/v1/games", gameRoutes);
 app.use("/api/v1/users", userRoutes);
 
 app.get("/api/docs", (req, res) => {
-  const docsPath = path.join(__dirname, "docs", "APIDocs.md");
+  const docsPath = path.join(__dirname, "docs", "API_DOCUMENTATION.md");
   res.sendFile(docsPath);
 });
 

@@ -12,7 +12,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 COPY --from=build /app/dist ./dist
-COPY backend/docs ./dist/docs
+COPY API_DOCUMENTATION.md ./dist/docs/API_DOCUMENTATION.md
 COPY package*.json ./
 RUN npm install --omit=dev
 
