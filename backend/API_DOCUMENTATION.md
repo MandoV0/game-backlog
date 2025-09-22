@@ -1,9 +1,13 @@
 # GameBacklog API Documentation
 
 ## Base URL
+Use a relative base path so the same docs work locally and in production:
 ```
-http://localhost:3000/api/v1
+/api/v1
 ```
+Notes:
+- When running via Docker Compose with Nginx, requests go through the frontend at `http://localhost:3000` and are proxied to the backend under `/api`.
+- In production (e.g., Railway), your frontend domain will proxy `/api` to the backend as well. Example full URL: `https://your-frontend-domain/api/v1`.
 
 ## Authentication
 Most user routes require a JWT in the Authorization header:
@@ -393,23 +397,27 @@ Common HTTP Status Codes:
 
 ## Environment Variables
 
-Create a `.env` file in the project root:
+Create a `.env` file in the backend project root (values shown are examples):
 
 ```env
 # Database Configuration
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=gamebacklog
-DB_USER=your_username
-DB_PASSWORD=your_password
+DB_NAME=game_backlog_v1
+DB_USER=postgres
+DB_PASSWORD=gamebacklog
 
 # JWT Configuration
 JWT_SECRET=your-super-secret-jwt-key-here
 
 # Server Configuration
-PORT=3000
+PORT=5000
 NODE_ENV=development
 ```
+
+Railway notes:
+- Railway sets `PORT` automatically; you do not need to set it manually. The backend binds to `0.0.0.0:$PORT`.
+- Use the Postgres plugin on Railway and copy its `HOST`, `PORT`, `DATABASE`, `USER`, `PASSWORD` into backend variables `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`.
 
 ---
 
