@@ -2,6 +2,7 @@ import express from "express";
 import gameRoutes from "./routes/game.routes";
 import userRoutes from "./routes/user.routes";
 import cors from "cors";
+import path from "path";
 import { errorHandler } from "./middlewares/error.middleware";
 
 const app = express();
@@ -20,6 +21,11 @@ app.use(express.json());
 // Routes
 app.use("/api/v1/games", gameRoutes);
 app.use("/api/v1/users", userRoutes);
+
+app.get("/api/docs", (req, res) => {
+  const docsPath = path.join(__dirname, "docs", "APIDocs.md");
+  res.sendFile(docsPath);
+});
 
 // Error handling middleware
 app.use(errorHandler);
