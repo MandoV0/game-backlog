@@ -6,7 +6,6 @@ services:
     depends_on:
       - backend
     environment:
-      # Useful if you later want to inject runtime config
       - NODE_ENV=production
 
   backend:

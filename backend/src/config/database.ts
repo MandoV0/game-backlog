@@ -24,8 +24,20 @@ dotenv.config();
 
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false /* Render : Local */
 });
+
+/**
+ * In ENV File:
+ * For Local Development:
+ * NODE_ENV=development
+ * DATABASE_URL=postgresql://postgres:gamebacklog@localhost:5432/game_backlog_v1
+ *
+ * For Production (Render):
+ * NODE_ENV=production
+ * DATABASE_URL=Render_PSQL_URL
+ */
+console.log("DATABASE_URL:", process.env.DATABASE_URL);
 
 pool.connect()
   .then(() => console.log("Connected to PostgreSQL"))

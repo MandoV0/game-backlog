@@ -6409,4 +6409,3 @@ ALTER TABLE ONLY public.user_games
 --
 -- PostgreSQL database dump complete
 --
-

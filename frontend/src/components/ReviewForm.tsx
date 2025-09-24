@@ -11,7 +11,7 @@ interface ReviewFormProps {
 
 const ReviewForm: React.FC<ReviewFormProps> = ({ gameId, editingReview, onCancel, onSuccess }) => {
     const [title, setTitle] = useState("");
-    const [rating, setRating] = useState(0);
+    const [rating, setRating] = useState("");
     const [reviewText, setReviewText] = useState("");
     const [error, setError] = useState("");
 
@@ -20,11 +20,11 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ gameId, editingReview, onCancel
     useEffect(() => {
         if (editingReview) {
             setTitle(editingReview.title || "");
-            setRating(editingReview.rating || 0);
+            setRating(editingReview.rating + "" || "");
             setReviewText(editingReview.content || "");
         } else {
             setTitle("");
-            setRating(0);
+            setRating("");
             setReviewText("");
         }
     }, [editingReview]);
@@ -42,13 +42,15 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ gameId, editingReview, onCancel
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        
-        if (!title.trim() || !reviewText.trim() || rating < 1 || rating > 10) {
+
+        const numberRating = Number(rating);
+
+        if (!title.trim() || !reviewText.trim() || numberRating < 1 || numberRating > 10) {
             setError("Please fill in all fields with valid values");
             return;
         }
 
-        mutation.mutate({ gameId, rating, title, reviewText });
+        mutation.mutate({ gameId, rating: numberRating, title, reviewText });
     };
 
     return (
@@ -76,7 +78,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ gameId, editingReview, onCancel
                         min={1}
                         max={10}
                         value={rating}
-                        onChange={(e) => setRating(Number(e.target.value))}
+                        onChange={(e) => setRating(e.target.value)}
                         placeholder="Rate this game"
                         required
                     />
