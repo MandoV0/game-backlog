@@ -5,9 +5,6 @@ Use a relative base path so the same docs work locally and in production:
 ```
 /api/v1
 ```
-Notes:
-- When running via Docker Compose with Nginx, requests go through the frontend at `http://localhost:3000` and are proxied to the backend under `/api`.
-- In production (e.g., Railway), your frontend domain will proxy `/api` to the backend as well. Example full URL: `https://your-frontend-domain/api/v1`.
 
 ## Authentication
 Most user routes require a JWT in the Authorization header:
@@ -392,49 +389,3 @@ Common HTTP Status Codes:
 - 404 - Not Found (resource doesn't exist)
 - 409 - Conflict (resource already exists)
 - 500 - Internal Server Error
-
----
-
-## Environment Variables
-
-Create a `.env` file in the backend project root (values shown are examples):
-
-```env
-# Database Configuration
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=game_backlog_v1
-DB_USER=postgres
-DB_PASSWORD=gamebacklog
-
-# JWT Configuration
-JWT_SECRET=your-super-secret-jwt-key-here
-
-# Server Configuration
-PORT=5000
-NODE_ENV=development
-```
-
-Railway notes:
-- Railway sets `PORT` automatically; you do not need to set it manually. The backend binds to `0.0.0.0:$PORT`.
-- Use the Postgres plugin on Railway and copy its `HOST`, `PORT`, `DATABASE`, `USER`, `PASSWORD` into backend variables `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`.
-
----
-
-## Getting Started
-
-1. Install dependencies:
-```bash
-npm install
-```
-
-2. Set up your database using `src/schema.sql`.
-
-3. Create a `.env` file with your configuration.
-
-4. Start the development server:
-```bash
-npm run dev
-```
-
-The API will be available at `http://localhost:PORT`.
