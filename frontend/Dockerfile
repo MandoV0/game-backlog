@@ -4,13 +4,20 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+
+# Experimental
+ARG VITE_APP_API_BASE_URL
+ENV VITE_APP_API_BASE_URL=$VITE_APP_API_BASE_URL
+
+RUN echo "VITE_APP_API_BASE_URL=$VITE_APP_API_BASE_URL" > .env.production
+
 RUN npm run build
 
 FROM nginx:alpine
 RUN apk add --no-cache gettext
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copy default nginx config (for local/docker-compose) and a template for Railway
+# Experimental
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY nginx.conf.template /etc/nginx/conf.d/default.conf.template
 COPY docker-entrypoint.sh /docker-entrypoint.sh
